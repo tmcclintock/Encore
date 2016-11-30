@@ -1,3 +1,9 @@
+# the output directory
+output
+
+# emacs backup files
+*~
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
