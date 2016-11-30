@@ -4,7 +4,8 @@ The encore class.
 import os
 
 class encore(object):
-    def __init__(self,outpath="./"):
+    def __init__(self,particle_mass,outpath="./"):
+        self.particle_mass = particle_mass #Msun/h
         self.outpath = outpath
         self.make_paths()
 
@@ -31,5 +32,6 @@ class encore(object):
         return
 
 if __name__=="__main__":
-    my_encore = encore("./output/")
+    particle_mass = 3.98769e10 #Msun/h
+    my_encore = encore(particle_mass,"./output/")
     print "Unit test complete"
