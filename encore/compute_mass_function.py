@@ -4,9 +4,14 @@ Compute the halo mass function.
 import os
 import numpy as np
 
-def compute_mass_function(outpath,nbins,limits=None):
+def compute_mass_function(outpath,nbins,do_JK,limits=None):
     #Step 1: figure out the Min/Max masses
-    if limits is None: limits = find_mass_limits(outpath)
+    if limits is None: 
+        if os.path.exists(outpath+"/info_files/mass_limits.txt"):
+            limits = np.loadtxt(outpath+"/info_files/mass_limits.txt")
+        else: 
+            limits = find_mass_limits(outpath)
+            np.savetxt(outpath+"/info_files/mass_limits.txt",limits)
 
     #Step 2: calcalate the full mass function
     calculate_full_mass_function(outpath,limits,nbins)
@@ -25,7 +30,7 @@ def find_mass_limits(outpath):
         if m < mmin: mmin = m
         if m > mmax: mmax = m*1.00001 #Go slightly high for completeness
     infile.close()
-    return [mmin,mmax]
+    return np.array([mmin,mmax])
 
 def calculate_full_mass_function(outpath,limits,nbins):
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
