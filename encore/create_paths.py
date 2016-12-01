@@ -15,8 +15,8 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/mass_function/full_N")
     os.system("mkdir -p %s"%outpath+"/mass_function/JK_single_N")
     os.system("mkdir -p %s"%outpath+"/mass_function/JK_combined_N")
-    os.system("mkdir -p %s"%outpath+"/mass_function/cov_matrices")
-    os.system("mkdir -p %s"%outpath+"/mass_function/final_mass_functions")
+    os.system("mkdir -p %s"%outpath+"/mass_function/cov_matrix")
+    os.system("mkdir -p %s"%outpath+"/mass_function/final_mass_function")
     print "Mass function directories created."
     
     print "Correlation function directories not implemented yet!"

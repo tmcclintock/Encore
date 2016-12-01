@@ -63,6 +63,72 @@ def calculate_full_mass_function(outpath,limits,nbins):
     return
 
 def calculate_JK_mass_function(outpath,limits,nbins,ndivs):
+    #First create singles
+    calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs)
+    #Now recombine
+    N = combine_JK_mass_function(outpath,nbins,ndivs)
+    #Now make final data and covariances
+    make_data_and_cov(outpath,nbins,ndivs,N)
+    return
+
+def make_data_and_cov(outpath,nbins,ndivs,N):
+    """
+    Make the final data and the covariance matrix.
+    """
+    Njks = ndivs**3
+    jkinbase  = outpath+"/mass_function/JK_combined_N/jk_combo_N_%d.txt"
+    finalpath = outpath+"/mass_function/final_mass_function/final_mass_function.txt"
+    covpath   = outpath+"/mass_function/cov_matrix/cov_matrix.txt"
+    Nall = np.zeros((Njks,nbins))
+    for i in range(Njks):
+        jkcombo = np.genfromtxt(jkinbase%i)
+        Nall[i] = jkcombo[:,2]
+        bins = jkcombo[:,:2]
+    Nmean = np.mean(Nall,0)
+    cov = np.zeros((nbins,nbins))
+    covfile = open(covpath,"w")
+    for i in range(nbins):
+        for j in range(nbins):
+            cov[i,j] = (Njks-1.)/Njks*np.sum((Nall[:,i]-Nmean[i])*(Nall[:,i]-Nmean[i]))
+            covfile.write("%e\t"%cov[i,j])
+        covfile.write("\n")
+    outfile = open(finalpath,"w")
+    outfile.write("#Bin_left\tBin_right\tN_halos\tN_halos_err\n")
+    for i in range(nbins):
+        outfile.write("%.4e\t%.4e\t%d\t%e\n"%(bins[i,0],bins[i,1],N[i],np.sqrt(cov[i,i])))
+    outfile.close()
+    print "Final JK data and covariance matrix created."
+    return
+
+def combine_JK_mass_function(outpath,nbins,ndivs):
+    """
+    Combine the JKs.
+    """
+    Njks = ndivs**3
+    jkinbase  = outpath+"/mass_function/JK_single_N/jk_single_N_%d.txt"
+    jkoutbase = outpath+"/mass_function/JK_combined_N/jk_combo_N_%d.txt"
+    N = np.zeros((nbins))
+    Nerr = np.zeros((nbins))
+    Nall = np.zeros((Njks,nbins))
+    for i in range(Njks):
+        jksingle = np.genfromtxt(jkinbase%i)
+        Nall[i] = jksingle[:,2]
+        bins = jksingle[:,:2]
+    N = np.sum(Nall,0)
+    for i in range(Njks):
+        Nout = N - Nall[i]
+        outfile = open(jkoutbase%i,"w")
+        outfile.write("#Bin_left\tBin_right\tN_halos\n")
+        for j in range(nbins):
+            outfile.write("%.4e\t%.4e\t%d\n"%(bins[j,0],bins[j,1],Nout[j]))
+        outfile.close()
+    print "Successfully combined JK N(M) files."
+    return N
+
+def calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs):
+    """
+    Get N(M) for individual JK regions.
+    """
     mmin,mmax = limits
     lmmin,lmmax = np.log(limits)
     edges = np.exp(np.linspace(lmmin,lmmax,nbins+1))
