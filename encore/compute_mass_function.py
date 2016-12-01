@@ -20,7 +20,7 @@ def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
     if do_JK:
         calculate_JK_mass_function(outpath,limits,nbins,ndivs)
     
-    print "Mass function not implemented yet."
+    print "Mass function successfully computed."
     return
 
 def find_mass_limits(outpath):
