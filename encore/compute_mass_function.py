@@ -4,7 +4,7 @@ Compute the halo mass function.
 import os
 import numpy as np
 
-def compute_mass_function(outpath,nbins,do_JK,limits=None):
+def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
     #Step 1: figure out the Min/Max masses
     if limits is None: 
         if os.path.exists(outpath+"/info_files/mass_limits.txt"):
@@ -15,6 +15,10 @@ def compute_mass_function(outpath,nbins,do_JK,limits=None):
 
     #Step 2: calcalate the full mass function
     calculate_full_mass_function(outpath,limits,nbins)
+
+    #Step 3: do JK calculation
+    if do_JK:
+        calculate_JK_mass_function(outpath,limits,nbins,ndivs)
     
     print "Mass function not implemented yet."
     return
@@ -57,3 +61,32 @@ def calculate_full_mass_function(outpath,limits,nbins):
     outfile.close()
     print "Successfully created full N(M)."
     return
+
+def calculate_JK_mass_function(outpath,limits,nbins,ndivs):
+    mmin,mmax = limits
+    lmmin,lmmax = np.log(limits)
+    edges = np.exp(np.linspace(lmmin,lmmax,nbins+1))
+    bins = np.array([edges[:-1],edges[1:]]).T
+
+    Njks = ndivs**3
+    jkoutbase = outpath+"/mass_function/JK_single_N/jk_single_N_%d.txt"
+    for i in range(Njks): 
+        outfile = open(jkoutbase%i,"w")
+        outfile.write("#Bin_left\tBin_right\tN_halos\n")
+    
+        N = np.zeros((nbins)) #Holds the mass function
+        jkredpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"%i
+        infile = open(jkredpath,"r")
+        for line in infile:
+            if line[0] is "#": continue
+            parts = line.split()
+            m = float(parts[2])
+            for b,j in zip(bins,range(len(bins))):
+                if m >= b[0] and m < b[1]: 
+                    N[j]+=1
+                    break
+                else: continue #Halo not in any bins
+        for j in range(len(bins)):
+            outfile.write("%.4e\t%.4e\t%d\n"%(bins[j,0],bins[j,1],N[j]))
+        outfile.close()
+    print "Successfully created JK N(M) singles."

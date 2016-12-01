@@ -28,13 +28,13 @@ class encore(object):
         #if do_JK: reduce_catalogs.jackknife_halo_catalog()
         return
 
-    def compute_mass_function(self,nbins=10,do_JK=None):
+    def compute_mass_function(self,nbins=10,do_JK=None,ndivs=4):
         """
         Compute the halo mass function.
         """
         import compute_mass_function
         if do_JK is None: do_JK = self.do_JK
-        compute_mass_function.compute_mass_function(self.outpath,nbins,do_JK)
+        compute_mass_function.compute_mass_function(self.outpath,nbins,do_JK,ndivs)
         return
 
 if __name__=="__main__":
