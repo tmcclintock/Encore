@@ -38,22 +38,86 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     #Get all autocorrelations
     #These are all of length Njks
     DDa_all, DRa_all = calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk)
-    print len(DDa_all),len(DRa_all)
 
     #Get all cross correlations
-    DDc_all,DRc_all,RRc_all = calculate_cross(outpath,config,randoms,step,ndivs,Njk)
+    DDc_all,DRc_all,RRc_all = calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk)
+
+    #Allocate the totals
+    DDt = treecorr.NNCorrelation(config)
+    DRt = treecorr.NNCorrelation(config)
+    RRt = treecorr.NNCorrelation(config)
+    for i in range(Njk):
+        DDt+=DDa_all[i]
+        DDt.meanr[:]+=0.5*DDc_all[i].meanr[:]
+        DDt.meanlogr[:]+=0.5*DDc_all[i].meanlogr[:]
+        DDt.weight[:]+=0.5*DDc_all[i].weight[:]
+        DDt.npairs[:]+=0.5*DDc_all[i].npairs[:]
+        DDt.tot+=0.5*DDc_all[i].tot
+
+        DRt+=DRa_all[i]
+        DRt.meanr[:]+=0.5*DRc_all[i].meanr[:]
+        DRt.meanlogr[:]+=0.5*DRc_all[i].meanlogr[:]
+        DRt.weight[:]+=0.5*DRc_all[i].weight[:]
+        DRt.npairs[:]+=0.5*DRc_all[i].npairs[:]
+        DRt.tot+=0.5*DRc_all[i].tot
+
+        RRt+=RRa
+        RRt.meanr[:]+=0.5*RRc_all[i].meanr[:]
+        RRt.meanlogr[:]+=0.5*RRc_all[i].meanlogr[:]
+        RRt.weight[:]+=0.5*RRc_all[i].weight[:]
+        RRt.npairs[:]+=0.5*RRc_all[i].npairs[:]
+        RRt.tot+=0.5*RRc_all[i].tot
+    DDt.write("test_jkhhcf.txt",RRt,DRt)
 
     print "HHCF JK not implemented yet!"
     return
 
-def calculate_cross(outpath,config,randoms,step,ndivs,Njk):
+def calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk):
     """
     Calcualte the DD, DR and RR cross correlations
     """
+    #Inititalize these objects
     DDc_all = []
     DRc_all = []
     RRc_all = []
-    return 0,0,0
+    for i in range(Njk):
+        DDc_all.append(treecorr.NNCorrelation(config))
+        DRc_all.append(treecorr.NNCorrelation(config))
+        RRc_all.append(treecorr.NNCorrelation(config))
+        
+    for index1 in range(Njk):
+        halos1 = all_halos[index1]
+        halo_cat1 = treecorr.Catalog(x=halos1[:,0],y=halos1[:,1],z=halos1[:,2],config=config)
+        i = index1%ndivs
+        j = (index1/ndivs)%ndivs
+        k = index1/ndivs**2
+        random_cat1 = treecorr.Catalog(x=randoms[:,0]+i*step,\
+                                      y=randoms[:,1]+j*step,\
+                                      z=randoms[:,2]+k*step,\
+                                      config=config)
+        for index2 in xrange(index1+1,Njk):
+            halos2 = all_halos[index2]
+            halo_cat2 = treecorr.Catalog(x=halos2[:,0],y=halos2[:,1],z=halos2[:,2],config=config)
+            i = index2%ndivs
+            j = (index2/ndivs)%ndivs
+            k = index2/ndivs**2
+            random_cat2 = treecorr.Catalog(x=randoms[:,0]+i*step,\
+                                           y=randoms[:,1]+j*step,\
+                                           z=randoms[:,2]+k*step,\
+                                           config=config)
+            DD = treecorr.NNCorrelation(config)
+            DR = treecorr.NNCorrelation(config)
+            RR = treecorr.NNCorrelation(config)
+            DD.process(halo_cat1,halo_cat2)
+            DR.process(halo_cat1,random_cat2)
+            RR.process(random_cat1,random_cat2)
+            DDc_all[index1]+=DD
+            DDc_all[index2]+=DD
+            DRc_all[index1]+=DR
+            DRc_all[index2]+=DR
+            RRc_all[index1]+=RR
+            RRc_all[index2]+=RR
+    return DDc_all,DRc_all,RRc_all
 
 def calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk):
     """
