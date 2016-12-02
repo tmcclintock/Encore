@@ -11,18 +11,41 @@ except ImportError: raise Exception("Must install treecorr.")
 def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
+
+    Inputs:
+       outpath: the base directory where the output directories exist
+       nbins: the number of radial bins to calculate xi_hh for
+       limits: an array with two entries with the min/max separation
+       edges: the spatial edges of the simulation, i.e. xmin and xmax
+       do_JK: boolean for wheather to calculate jackknife values
+       ndivs: number of JK subregions
     """
-    #Interface with treecorr
+    #Treecorr interface
     config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
+    
+    #Calculate RR autocorrelation once
     random_cat = treecorr.Catalog(x=randoms[:,0],y=randoms[:,1],z=randoms[:,2],config=config)
-    RR = treecorr.NNCorrelation(config)
-    RR.process(random_cat)
+    RRa = treecorr.NNCorrelation(config)
+    RRa.process(random_cat)
+
     #Jackknife subregion step size
     step = (edges[1]-edges[0])/ndivs
     Njk = int(ndivs**3)
-    TC_output = [] #Will be of length Njk*(Njk-1)/2
+
+    #Get all autocorrelations
+    DDa_all, DRa_all = calculate_autos(outpath,config,randoms,step,ndivs,Njk)
+    print len(DDa_all),len(DRa_all)
+    print "HHCF JK not implemented yet!"
+    return
+
+def calculate_autos(outpath,config,randoms,step,ndivs,Njk):
+    """
+    Calculate the DD and DR autocorrelations
+    """
+    DDa_all = []
+    DRa_all = []
     jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
-    for index in range(1):#Njk):
+    for index in range(Njk):
         infile = open(jkpath%index,"r")
         halos = [] #Will be Nhjk X 3
         for line in infile:
@@ -43,10 +66,7 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
         DR = treecorr.NNCorrelation(config)
         DD.process(halo_cat)
         DR.process(halo_cat,random_cat)
-        xi,varxi = DD.calculateXi(RR,DR)
-        print xi
-        print "weight",DD.weight
-        DD.write("JK_test.txt",RR,DR)
-        
-    print "HHCF JK singles not implemented yet!"
-    return
+        DDa_all.append(DD)
+        DRa_all.append(DR)
+    print "For HHCF all DD and DR autocorrelations computed."
+    return DDa_all,DRa_all
