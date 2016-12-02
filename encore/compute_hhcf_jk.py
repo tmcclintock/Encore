@@ -20,6 +20,13 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    #Jackknife subregion step size
+    step = (edges[1]-edges[0])/ndivs
+    Njk = int(ndivs**3)
+
+    #Read in all halos
+    all_halos = read_halos(outpath,Njk)
+
     #Treecorr interface
     config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
     
@@ -28,32 +35,34 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     RRa = treecorr.NNCorrelation(config)
     RRa.process(random_cat)
 
-    #Jackknife subregion step size
-    step = (edges[1]-edges[0])/ndivs
-    Njk = int(ndivs**3)
-
     #Get all autocorrelations
-    DDa_all, DRa_all = calculate_autos(outpath,config,randoms,step,ndivs,Njk)
+    #These are all of length Njks
+    DDa_all, DRa_all = calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk)
     print len(DDa_all),len(DRa_all)
+
+    #Get all cross correlations
+    DDc_all,DRc_all,RRc_all = calculate_cross(outpath,config,randoms,step,ndivs,Njk)
+
     print "HHCF JK not implemented yet!"
     return
 
-def calculate_autos(outpath,config,randoms,step,ndivs,Njk):
+def calculate_cross(outpath,config,randoms,step,ndivs,Njk):
+    """
+    Calcualte the DD, DR and RR cross correlations
+    """
+    DDc_all = []
+    DRc_all = []
+    RRc_all = []
+    return 0,0,0
+
+def calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk):
     """
     Calculate the DD and DR autocorrelations
     """
     DDa_all = []
     DRa_all = []
-    jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
     for index in range(Njk):
-        infile = open(jkpath%index,"r")
-        halos = [] #Will be Nhjk X 3
-        for line in infile:
-            if line[0] is "#": continue
-            parts = line.split()
-            halos.append([float(parts[8]),float(parts[9]),float(parts[10])])
-        halos = np.array(halos)
-        infile.close()
+        halos = all_halos[index]
         i = index%ndivs
         j = (index/ndivs)%ndivs
         k = index/ndivs**2
@@ -70,3 +79,18 @@ def calculate_autos(outpath,config,randoms,step,ndivs,Njk):
         DRa_all.append(DR)
     print "For HHCF all DD and DR autocorrelations computed."
     return DDa_all,DRa_all
+
+def read_halos(outpath,Njk):
+    all_halos = []
+    jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
+    for index in range(Njk):
+        infile = open(jkpath%index,"r")
+        halos = [] #Will be Nhjk X 3
+        for line in infile:
+            if line[0] is "#": continue
+            parts = line.split()
+            halos.append([float(parts[8]),float(parts[9]),float(parts[10])])
+        halos = np.array(halos)
+        infile.close()
+        all_halos.append(halos)
+    return np.array(all_halos)
