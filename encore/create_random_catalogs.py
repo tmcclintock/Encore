@@ -10,7 +10,7 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     Create random catalogs for the full region
     and a JK subregion.
     """
-    M = 10 #Multiplicative factor
+    M = 2 #Multiplicative factor
     Nr = int(M*Nh) #Randoms number
     Njk = ndivs**3
     Nrjk = int(Nr/Njk)

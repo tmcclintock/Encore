@@ -48,7 +48,7 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
     #Step 4: calculate the HH correlation function within JK subregions
     if do_JK:
         import compute_hhcf_jk
-        compute_hhcf_jk.calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs)
+        compute_hhcf_jk.calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randomsjk,ndivs)
 
     print "Jackknifed halo-halo correlation function not implemented yet!"
     return
