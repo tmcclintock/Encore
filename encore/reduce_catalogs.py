@@ -4,6 +4,17 @@ Reduce the halo catalog.
 import os
 import numpy as np
 
+#First pull out the indices
+indices = {}
+with open("rockstar_config") as myfile:
+    for line in myfile:
+        name, var = line.partition("=")[::2]
+        indices[name.strip()] = int(var)
+x_index = indices['x']
+y_index = indices['y']
+z_index = indices['z']
+m_index = indices['m']
+
 def reduce_halo_catalog(outpath,pmass,do_JK,ndivs):
     print "Reducing halo catalog."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
@@ -36,7 +47,7 @@ def jackknife_halo_catalog(outpath,ndivs):
                 jkarray[i].write(line)
             continue
         parts = line.split()
-        x,y,z = float(parts[8]),float(parts[9]),float(parts[10])
+        x,y,z = float(parts[x_index]),float(parts[y_index]),float(parts[z_index])
         i = min(np.floor(x/dx),ndivs-1)
         j = min(np.floor(y/dy),ndivs-1)
         k = min(np.floor(z/dz),ndivs-1)
@@ -55,7 +66,7 @@ def find_spatial_limits(outpath):
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
-        x,y,z = float(parts[8]),float(parts[9]),float(parts[10])
+        x,y,z = float(parts[x_index]),float(parts[y_index]),float(parts[z_index])
         if x < xmin: xmin = np.floor(x)
         if x > xmax: xmax = np.ceil(x)
         if y < ymin: ymin = np.floor(y)
