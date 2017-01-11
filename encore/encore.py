@@ -1,5 +1,7 @@
 """
 The encore class.
+
+There is a unit test at the bottom of this file.
 """
 
 class encore(object):
@@ -57,11 +59,11 @@ class encore(object):
         return
 
 if __name__=="__main__":
-    particle_mass = 3.98769e10 #Msun/h; this isn't required (not implemented)
+    particle_mass = 3.98769e10 #Msun/h
     my_encore = encore("../output/",particle_mass,do_JK=True)
     my_encore.reduce_halo_catalogs()
     my_encore.compute_mass_function(do_JK=True)
     edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
-    #my_encore.create_random_catalogs(edges,100000)
-    #my_encore.compute_hhcf(edges,do_JK=True)
+    my_encore.create_random_catalogs(edges,N=100000)
+    my_encore.compute_hhcf(edges,do_JK=True)
     print "Unit test complete"
