@@ -20,3 +20,7 @@ Mass Function
 The test data can create jackknifed mass functions:
 
 ![mf_example](plots/MF_example.png)
+
+or halo-halo correlation functions (note: these are posson error bars for now):
+
+![hhcf_example](plots/HHCF_example.png)
