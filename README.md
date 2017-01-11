@@ -24,12 +24,9 @@ or halo-halo correlation functions (note: these are posson error bars for now):
 
 The next measureables to be implemented (in order) are:
 
- Markup : 1. Halo-matter correlation functions
-	2. Matter-matter correlation functions
-	3. Sigma profiles
-	4. DeltaSigma profiles
-
- Markup : 1. A numbered list
-           1. A nested numbered list
-           2. Which is numbered
-          2. Which is numbered
+~~~ 
+1. Halo-matter correlation functions
+2. Matter-matter correlation functions
+3. Sigma profiles
+4. DeltaSigma profiles
+~~~
