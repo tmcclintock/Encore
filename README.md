@@ -12,4 +12,11 @@ This code is still in development.
 
 Usage
 =====
-At the moment, only the mass function generation is being produced.
+Currently, jackknifed mass functions and
+halo-halo correlation functions are created.
+
+Mass Function
+=============
+The test data can create jackknifed mass functions:
+
+![mf_example](plots/MF_example.png)
