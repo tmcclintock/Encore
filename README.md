@@ -23,7 +23,6 @@ or halo-halo correlation functions (note: these are posson error bars for now):
 ![hhcf_example](plots/HHCF_example.png)
 
 The next measureables to be implemented (in order) are:
-
 ~~~ 
 1. Halo-matter correlation functions
 2. Matter-matter correlation functions
