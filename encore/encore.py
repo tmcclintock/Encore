@@ -16,8 +16,8 @@ class encore(object):
         """
         Create paths to the output directories.
         """
-        import create_paths
-        create_paths.create_paths(self.outpath)
+        import paths
+        paths.create_paths(self.outpath)
         return
 
     def reduce_halo_catalogs(self):
@@ -32,8 +32,8 @@ class encore(object):
         """
         Create random catalogs.
         """
-        import create_random_catalogs as crc
-        crc.create_halo_random_catalog(self.outpath,edges,N,self.ndivs)
+        import randoms
+        randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs)
         print "Only halo randoms implemented right now!"
         return
 

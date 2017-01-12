@@ -10,13 +10,13 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     Create random catalogs for the full region
     and a JK subregion.
     """
-    M = 2 #Multiplicative factor
+    M = 1 #Multiplicative factor
     Nr = int(M*Nh) #Randoms number
     Njk = ndivs**3
     Nrjk = int(Nr/Njk)
     print "Creating random catalogs with:"
     print "\tN_randoms full = %d"%Nr
-    print "\tN_randoms JK   = %d"%Nrjk
+    print "\tN_randoms/JK   = %d"%Nrjk
     dl,dr = edges
     width = dr-dl
     x = np.random.rand(Nr)*width
