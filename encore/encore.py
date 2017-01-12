@@ -25,7 +25,7 @@ class encore(object):
         Reduce the halo catalog.
         """
         import reduce_catalogs
-        reduce_catalogs.reduce_halo_catalog(self.outpath,self.particle_mass,self.do_JK,self.ndivs)
+        reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(self.outpath,self.particle_mass,self.do_JK,self.ndivs)
         return
 
     def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False):
