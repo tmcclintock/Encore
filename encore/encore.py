@@ -41,9 +41,9 @@ class encore(object):
         """
         Compute the halo mass function.
         """
-        import compute_mass_function
+        import mass_function
         if do_JK is None: do_JK = self.do_JK
-        compute_mass_function.compute_mass_function(self.outpath,nbins,do_JK,self.ndivs)
+        mass_function.compute_mass_function(self.outpath,nbins,do_JK,self.ndivs)
         return
 
     def compute_hhcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
@@ -53,9 +53,9 @@ class encore(object):
         The only required input is the spatial edges
         of the snapshot (e.g. 0 to 1000 Mpc/h).
         """
-        import compute_hhcf
+        import hhcf
         if do_JK is None: do_JK = self.do_JK
-        compute_hhcf.compute_hhcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
+        hhcf.compute_hhcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
 if __name__=="__main__":
