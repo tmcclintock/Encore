@@ -4,7 +4,7 @@ Reduce the halo catalog.
 import os
 import numpy as np
 
-#First pull out the indices
+#Pull out the indices
 indices = {}
 with open("rockstar_config") as myfile:
     for line in myfile:

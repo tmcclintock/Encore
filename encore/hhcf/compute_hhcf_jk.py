@@ -8,6 +8,17 @@ except ImportError: raise Exception("Must install numpy.")
 try: import treecorr
 except ImportError: raise Exception("Must install treecorr.")
 
+#Pull out the indices
+indices = {}
+with open("rockstar_config") as myfile:
+    for line in myfile:
+        name, var = line.partition("=")[::2]
+        indices[name.strip()] = int(var)
+x_index = indices['x']
+y_index = indices['y']
+z_index = indices['z']
+m_index = indices['m']
+
 def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
@@ -229,7 +240,7 @@ def read_halos(outpath,Njk):
         for line in infile:
             if line[0] is "#": continue
             parts = line.split()
-            halos.append([float(parts[8]),float(parts[9]),float(parts[10])])
+            halos.append([float(parts[x_index]),float(parts[y_index]),float(parts[z_index])])
         halos = np.array(halos)
         infile.close()
         all_halos.append(halos)

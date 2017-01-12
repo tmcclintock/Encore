@@ -7,6 +7,17 @@ except ImportError: raise Exception("Must install numpy.")
 try: import treecorr
 except ImportError: raise Exception("Must install treecorr.")
 
+#Pull out the indices
+indices = {}
+with open("rockstar_config") as myfile:
+    for line in myfile:
+        name, var = line.partition("=")[::2]
+        indices[name.strip()] = int(var)
+x_index = indices['x']
+y_index = indices['y']
+z_index = indices['z']
+m_index = indices['m']
+
 def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
     """
     Compute the halo-halo correlation function.
@@ -65,7 +76,7 @@ def calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms):
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
-        halos[i,:] = float(parts[8]),float(parts[9]),float(parts[10])
+        halos[i,:] = float(parts[x_index]),float(parts[y_index]),float(parts[z_index])
         i+=1
     infile.close()
     #Interface with treecorr
@@ -96,7 +107,7 @@ def calculate_mean_mass(outpath,do_JK,ndivs):
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
-        m = float(parts[2])
+        m = float(parts[m_index])
         Mtotal += m
         N += 1
     Mmean = Mtotal/N

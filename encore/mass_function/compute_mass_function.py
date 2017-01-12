@@ -4,6 +4,17 @@ Compute the halo mass function.
 import os
 import numpy as np
 
+#Pull out the indices
+indices = {}
+with open("rockstar_config") as myfile:
+    for line in myfile:
+        name, var = line.partition("=")[::2]
+        indices[name.strip()] = int(var)
+x_index = indices['x']
+y_index = indices['y']
+z_index = indices['z']
+m_index = indices['m']
+
 def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
     #Step 1: figure out the Min/Max masses
     if limits is None: 
@@ -30,7 +41,7 @@ def find_mass_limits(outpath):
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
-        m = float(parts[2])
+        m = float(parts[m_index])
         if m < mmin: mmin = m
         if m > mmax: mmax = m*1.00001 #Go slightly high for completeness
     infile.close()
@@ -48,7 +59,7 @@ def calculate_full_mass_function(outpath,limits,nbins):
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
-        m = float(parts[2])
+        m = float(parts[m_index])
         for b,i in zip(bins,range(len(bins))):
             if m >= b[0] and m < b[1]: 
                 N[i]+=1

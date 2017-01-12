@@ -12,6 +12,8 @@ This code is still in development.
 
 Usage
 =====
+Please see the example.py file for how to use Encore.
+
 Currently, jackknifed mass functions and
 halo-halo correlation functions are created.
 The test data can create jackknifed mass functions:
