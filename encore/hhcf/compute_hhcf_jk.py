@@ -19,6 +19,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
+
 def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
@@ -33,7 +34,6 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     """
     #Jackknife subregion step size
     step = (edges[1]-edges[0])/ndivs
-    print "step = ",step
     Njk = int(ndivs**3)
 
     #Read in all halos
@@ -64,15 +64,30 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     #Find the covariance matrix
     cov = calculate_cov_matrix(outpath,xi_all,nbins,Njk)
     err = np.sqrt(np.diagonal(cov))
+
+    #Output the final data vector
     fullpath = outpath+"halohalo_correlation_function/full_hhcf/full_hhcf.txt"
     data = np.loadtxt(fullpath)
+    R = data[:,0]
     xi_true = data[:,3]
-    #for i in range(nbins):
-    #    print xi_true[i],err[i]
+    make_final_hhcf_data(outpath,R,xi_true,err)
 
-    print "HHCF JK not implemented yet!"
+    print "HHCF JK complete."
     return
 
+def make_final_hhcf_data(outpath,R,xi,err):
+    """
+    Create the finalized data file with the errors.
+    """
+    finalpath = outpath+"/halohalo_correlation_function/final_hhcf/final_hhcf.txt"
+    outfile = open(finalpath,"w")
+    outfile.write("#R Mpc/h; Xi; Xi_JK_err\n")
+    for i in range(len(R)):
+        outfile.write("%.4e\t%.4e\t%.4e\n"%(R[i],xi[i],err[i]))
+    outfile.close()
+    print "Final HHCF JK data created."
+    return
+    
 def calculate_cov_matrix(outpath,xi_all,nbins,Njk):
     """
     Calculate the JK covariance matrix.
@@ -85,7 +100,8 @@ def calculate_cov_matrix(outpath,xi_all,nbins,Njk):
     for i in range(nbins):
         for j in range(nbins):
             cov[i,j] = C*np.sum((xi_true[i]-xi_all[:,i])*(xi_true[j]-xi_all[:,j]))
-        #print xi_true[i],xi_all[:,i]
+    covpath = outpath+"halohalo_correlation_function/cov_matrix/cov_matrix.txt"
+    np.savetxt(covpath,cov)
     return cov
 
 def calculate_xi_LOO(RRa,DDt,DRt,RRt,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk):
@@ -94,40 +110,30 @@ def calculate_xi_LOO(RRa,DDt,DRt,RRt,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk
     """
     xi_all = []
     for i in range(Njk):
-        DDl = DDt.copy()
+        DDl = DDt.copy() #Copy the totals
         DRl = DRt.copy()
         RRl = RRt.copy()
-        DDl.meanr[:]-=DDa_all[i].meanr[:]
-        DDl.meanlogr[:]-=DDa_all[i].meanlogr[:]
+        #Remove the auto-correlations
         DDl.weight[:]-=DDa_all[i].weight[:]
         DDl.npairs[:]-=DDa_all[i].npairs[:]
         DDl.tot-=DDa_all[i].tot
-        DRl.meanr[:]-=DRa_all[i].meanr[:]
-        DRl.meanlogr[:]-=DRa_all[i].meanlogr[:]
         DRl.weight[:]-=DRa_all[i].weight[:]
         DRl.npairs[:]-=DRa_all[i].npairs[:]
         DRl.tot-=DRa_all[i].tot
-        RRl.meanr[:]-=RRa.meanr[:]
-        RRl.meanlogr[:]-=RRa.meanlogr[:]
         RRl.weight[:]-=RRa.weight[:]
         RRl.npairs[:]-=RRa.npairs[:]
         RRl.tot-=RRa.tot
-        for j in range(Njk):
-            DDl.meanr[:]-=0.5*DDc_all[i].meanr[:]
-            DDl.meanlogr[:]-=0.5*DDc_all[i].meanlogr[:]
+        for j in range(Njk): #Remove the cross-correlations
             DDl.weight[:]-=0.5*DDc_all[i].weight[:]
             DDl.npairs[:]-=0.5*DDc_all[i].npairs[:]
             DDl.tot-=0.5*DDc_all[i].tot
-            DRl.meanr[:]-=DRc_all[i].meanr[:]
-            DRl.meanlogr[:]-=DRc_all[i].meanlogr[:]
             DRl.weight[:]-=DRc_all[i].weight[:]
             DRl.npairs[:]-=DRc_all[i].npairs[:]
             DRl.tot-=DRc_all[i].tot
-            RRl.meanr[:]-=0.5*RRc_all[i].meanr[:]
-            RRl.meanlogr[:]-=0.5*RRc_all[i].meanlogr[:]
             RRl.weight[:]-=0.5*RRc_all[i].weight[:]
             RRl.npairs[:]-=0.5*RRc_all[i].npairs[:]
             RRl.tot-=0.5*RRc_all[i].tot
+        #Calculate xi_LOO
         xi,varxi = DDl.calculateXi(RRl,DRl)
         xi_all.append(xi)
     print "Leave-one-out HHCFs calculated."
@@ -142,17 +148,12 @@ def calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config):
         DRt+=DRa_all[i]
         DRt+=DRc_all[i]
         RRt+=RRa
-        DDt.meanr[:]+=0.5*DDc_all[i].meanr[:]
-        DDt.meanlogr[:]+=0.5*DDc_all[i].meanlogr[:]
         DDt.weight[:]+=0.5*DDc_all[i].weight[:]
         DDt.npairs[:]+=0.5*DDc_all[i].npairs[:]
         DDt.tot+=0.5*DDc_all[i].tot
-        RRt.meanr[:]+=0.5*RRc_all[i].meanr[:]
-        RRt.meanlogr[:]+=0.5*RRc_all[i].meanlogr[:]
         RRt.weight[:]+=0.5*RRc_all[i].weight[:]
         RRt.npairs[:]+=0.5*RRc_all[i].npairs[:]
         RRt.tot+=0.5*RRc_all[i].tot
-    DDt.write("test_jkhhcf.txt",RRt,DRt)
     print "Resumming HHCF JK total complete."
     return DDt,DRt,RRt
 

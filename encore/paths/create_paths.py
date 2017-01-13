@@ -24,7 +24,7 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/full_hhcf")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_single")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_combined")
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/cov_martrix")
+    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/cov_matrix")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/final_hhcf")
     print "Halo-halo correlation function directories created."
 

@@ -108,7 +108,7 @@ def make_data_and_cov(outpath,nbins,ndivs,N):
     for i in range(nbins):
         outfile.write("%.4e\t%.4e\t%d\t%e\n"%(bins[i,0],bins[i,1],N[i],np.sqrt(cov[i,i])))
     outfile.close()
-    print "Final JK data and covariance matrix created."
+    print "Final mass function JK data and covariance matrix created."
     return
 
 def combine_JK_mass_function(outpath,nbins,ndivs):

@@ -61,7 +61,7 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
         import compute_hhcf_jk
         compute_hhcf_jk.calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randomsjk,ndivs)
 
-    print "Jackknifed halo-halo correlation function not implemented yet!"
+    print "Halo-halo correlation function complete."
     return
 
 def calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms):

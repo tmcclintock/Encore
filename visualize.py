@@ -21,18 +21,18 @@ def plot_MF(lM,N,N_err):
     ylims = ax.get_ylim()
     ax.set_ylabel(r"${\rmNumber\ of\ halos}$",fontsize=24)
     plt.subplots_adjust(bottom=0.15,left=0.15,hspace=0.001)
+    plt.title(r"${\rm Halo\ mass\ function\ at\ }z=3$",fontsize=18)
     plt.show()
     plt.close()
 
 plot_MF(lM,N,N_err)
 
 #Read in the HH_CF data
-#Note: will switch to JK once it's properly implemented
-data_path = "./output/halohalo_correlation_function/full_hhcf/full_hhcf.txt"
+data_path = "./output/halohalo_correlation_function/final_hhcf/final_hhcf.txt"
 data = np.genfromtxt(data_path)
 R = data[:,0]
-xi = data[:,3]
-xi_err = data[:,4]
+xi = data[:,1]
+xi_err = data[:,2]
 def plot_HHCF(R,xi,xi_err):
     fig,ax = plt.subplots(1,1)
     ax.errorbar(R,xi,yerr=xi_err)
@@ -42,6 +42,7 @@ def plot_HHCF(R,xi,xi_err):
     ylims = ax.get_ylim()
     ax.set_ylabel(r"$\xi_{\rm hh}$",fontsize=24)
     plt.subplots_adjust(bottom=0.15,left=0.15,hspace=0.001)
+    plt.title(r"${\rm Halo-halo\ correlation\ function\ at\ }z=3$",fontsize=18)
     plt.show()
     plt.close()
     return
