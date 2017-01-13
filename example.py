@@ -33,5 +33,5 @@ my_encore.reduce_halo_catalogs()
 #Step 4
 my_encore.compute_mass_function(do_JK=True)
 my_encore.create_random_catalogs(edges,N=100000)
-#my_encore.compute_hhcf(edges,do_JK=True)
+my_encore.compute_hhcf(edges,do_JK=True)
 my_encore.compute_hmcf(edges,do_JK=True)

@@ -30,6 +30,20 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    #Step 1: calculate the mean masses
+    if os.path.exists(outpath+"/info_files/halo_mass_info.txt"):
+        halo_mass_info = np.loadtxt(outpath+"/info_files/halo_mass_info.txt")
+    else:
+        halo_mass_info = calculate_mean_mass(outpath,do_JK,ndivs)
+        np.savetxt(outpath+"/info_files/halo_mass_info.txt",halo_mass_info)
+    print "Halo masses averaged, results:"
+    print "\tMmean  = %e"%halo_mass_info[0]
+    print "\tMtotal = %e"%halo_mass_info[1]
+    print "\tNhalos = %d"%halo_mass_info[2]
+    Mmean,Mtotal,Nh = halo_mass_info
+
+    #Step 2: get random catalogs.
+    #GOTTA REWORK THE RANDOMS BECAUSE THEY AREN'T IN THE RIGHT PLACE
 
     print "Halo-matter correlation function not implemented yet!"
     return
