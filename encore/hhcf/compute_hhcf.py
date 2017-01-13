@@ -24,7 +24,7 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
 
     Inputs:
        outpath: the base directory where the output directories exist
-       nbins: the number of radial bins to calculate xi_hh for
+       nbins: the number of radial bins for the xi_hh
        limits: an array with two entries with the min/max separation
        edges: the spatial edges of the simulation, i.e. xmin and xmax
        do_JK: boolean for wheather to calculate jackknife values

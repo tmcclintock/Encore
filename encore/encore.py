@@ -58,6 +58,18 @@ class encore(object):
         hhcf.compute_hhcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
+    def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
+        """
+        Compute the halo-matter correlation function.
+        
+        The only required input is the spatial edges
+        of the snapshot (e.g. 0 to 1000 Mpc/h).
+        """
+        import hmcf
+        if do_JK is None: do_JK = self.do_JK
+        hmcf.compute_hmcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
+        return
+
 if __name__=="__main__":
     particle_mass = 3.98769e10 #Msun/h
     my_encore = encore("../output/",particle_mass,do_JK=True)
@@ -66,4 +78,5 @@ if __name__=="__main__":
     edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
     my_encore.create_random_catalogs(edges,N=100000)
     my_encore.compute_hhcf(edges,do_JK=True)
+    my_encore.compute_hmcf(edges,do_JK=True)
     print "Unit test complete"
