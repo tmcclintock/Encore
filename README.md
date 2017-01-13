@@ -10,6 +10,13 @@ ambitious and well thought out.
 
 This code is still in development.
 
+Rockstar Configuration
+======================
+There is no standard rockstar format file. That is,
+in a Rockstar halo catalog, the xyz-positions and masses
+for a halo can be in any column. This configuration
+must be specified in a "rockstar_config" file.
+
 Usage
 =====
 Please see the example.py file for how to use Encore.
