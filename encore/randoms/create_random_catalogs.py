@@ -23,14 +23,14 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     y = np.random.rand(Nr)*width
     z = np.random.rand(Nr)*width
     pos = np.array([x,y,z]).T
-    np.savetxt(outpath+"/halohalo_correlation_function/randoms/full_random.txt",pos)
+    np.savetxt(outpath+"/randoms/full_halo_random.txt",pos)
 
     widthjk = width/ndivs
     xjk = np.random.rand(Nrjk)*widthjk
     yjk = np.random.rand(Nrjk)*widthjk
     zjk = np.random.rand(Nrjk)*widthjk
     posjk = np.array([xjk,yjk,zjk]).T
-    np.savetxt(outpath+"/halohalo_correlation_function/randoms/jk_random.txt",posjk)
+    np.savetxt(outpath+"/randoms/jk_halo_random.txt",posjk)
 
     print "Creation of random catalogs complete."
     return

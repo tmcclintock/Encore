@@ -19,8 +19,11 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/mass_function/final_mass_function")
     print "Mass function directories created."
 
+    #Create the randoms directories
+    os.system("mkdir -p %s"%outpath+"/randoms")
+    print "Random directories created."
+
     #Create the halo-halo correlation function output directories
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/randoms")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/full_hhcf")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_single")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_combined")
@@ -28,7 +31,15 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/final_hhcf")
     print "Halo-halo correlation function directories created."
 
-    print "HM and MM Correlation function directories not implemented yet!"
+    #Create the halo-halo correlation function output directories
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/full_hmcf")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_single")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_combined")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/cov_matrix")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/final_hmcf")
+    print "Halo-matter correlation function directories created."
+
+    print "MM Correlation function directory not implemented yet!"
     
     print "DeltaSigma directories not implemented yet!"
     return
