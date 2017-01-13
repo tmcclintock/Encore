@@ -43,7 +43,54 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs):
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
-    #GOTTA REWORK THE RANDOMS BECAUSE THEY AREN'T IN THE RIGHT PLACE
+    halorandpath = outpath+"/randoms/jk_halo_random.txt"
+    dmrandpath   = outpath+"/randoms/jk_dm_random.txt"
+    if os.path.exists(halorandpath) and os.path.exists(dmrandpath): 
+        halorandoms = np.loadtxt(halorandpath)
+        dmrandoms = np.loadtxt(dmrandpath)
+    else: raise Exception("Must create random catalog first.")
+    print "Random catalogs loaded.\nUsing random catalogs with:"
+    print "\tN_halo_randoms JK = %d"%len(halorandoms)
+    print "\tN_dm_randoms JK   = %d"%len(dmrandoms)
+
+    #Step 3: calculate the full HH correlation function
+    calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs)
 
     print "Halo-matter correlation function not implemented yet!"
     return
+
+def calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs):
+    """
+    Calcualte the halo-matter correlation function.
+
+    Note: both set of randoms are already jackknifed.
+    """
+    #Jackknife subregion step size
+    step = (edges[1]-edges[0])/ndivs
+    Njk = int(ndivs**3)
+
+    #Read in all halos
+    all_halos = read_halos(outpath,Njk)
+
+    #Treecorr interface
+    config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
+
+    
+
+    print "HMCF JK not implemented yet!"
+    return
+
+def read_halos(outpath,Njk):
+    all_halos = []
+    jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
+    for index in range(Njk):
+        infile = open(jkpath%index,"r")
+        halos = [] #Will be Nhjk X 3
+        for line in infile:
+            if line[0] is "#": continue
+            parts = line.split()
+            halos.append([float(parts[x_index]),float(parts[y_index]),float(parts[z_index])])
+        halos = np.array(halos)
+        infile.close()
+        all_halos.append(halos)
+    return np.array(all_halos)

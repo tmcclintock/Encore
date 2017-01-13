@@ -19,7 +19,6 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-
 def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
