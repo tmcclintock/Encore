@@ -2,7 +2,9 @@
 An example of how to use encore.
 
 Steps:
-1) Define the DM particle mass and the spatial edges of the snapshot
+0) Add a path to encore to your python path.
+
+1) Define the DM particle mass and the spatial edges of the snapshot.
 
 2) Create an Encore object with a path to the output, the particle mass,
 and (optional) specify whether you want jackknifing.
@@ -13,6 +15,9 @@ and (optional) specify whether you want jackknifing.
 correlation functions. To accomplish the latter you
 need to create random catalogs.
 """
+import sys
+sys.path.insert(0,"../Encore/")
+
 import encore
 
 #Step 1
