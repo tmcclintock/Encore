@@ -75,14 +75,12 @@ def calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs):
     #Treecorr interface
     config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
 
-    #Calculate RR autocorrelations once
+    #Calculate RR once
     halorandom_cat = treecorr.Catalog(x=halorandoms[:,0],y=halorandoms[:,1],z=halorandoms[:,2],config=config)
     dmrandom_cat   = treecorr.Catalog(x=dmrandoms[:,0],y=dmrandoms[:,1],z=dmrandoms[:,2],config=config)
-    hRRa = treecorr.NNCorrelation(config)
-    hRRa.process(halorandom_cat)
-    dmRRa = treecorr.NNCorrelation(config)
-    dmRRa.process(dmrandom_cat)
-    print "HMCF RR autocorrelations calculated."
+    RRa = treecorr.NNCorrelation(config)
+    RRa.process(halorandom_cat,dmrandom_cat)
+    print "HMCF RR autocorrelation calculated."
 
     print "HMCF JK not implemented yet!"
     return
