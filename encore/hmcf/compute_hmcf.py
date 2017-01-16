@@ -54,12 +54,12 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs):
     print "\tN_dm_randoms JK   = %d"%len(dmrandoms)
 
     #Step 3: calculate the full HH correlation function
-    calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs)
+    calcalate_hmcf(outpath,nbins,limits,edges,halorandoms,dmrandoms,ndivs)
 
     print "Halo-matter correlation function not implemented yet!"
     return
 
-def calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs):
+def calcalate_hmcf(outpath,nbins,limits,edges,halorandoms,dmrandoms,ndivs):
     """
     Calcualte the halo-matter correlation function.
 
@@ -69,7 +69,7 @@ def calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs):
     step = (edges[1]-edges[0])/ndivs
     Njk = int(ndivs**3)
 
-    #Read in all halos
+    #Read in all halos; Note: the DM particles will be read in one at a time
     all_halos = read_halos(outpath,Njk)
 
     #Treecorr interface
@@ -81,6 +81,17 @@ def calcalate_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs):
     RRa = treecorr.NNCorrelation(config)
     RRa.process(halorandom_cat,dmrandom_cat)
     print "HMCF RR autocorrelation calculated."
+
+    #Calculate all DR/RD pairs
+    #NOTE: DR is for halos and RD is for dark matter
+    #DR_all = compute_DR(outpath,config,step,halorandoms,ndivs)
+    #RD_all,mapping = compute_RD(config,step,dmrandoms,ndivs) #NEED TO ADD A DM PATH!!
+
+    #Calculate all DD pairs
+    #DD_all = compute_DD(outpath,dmpath,config,step,ndivs)
+    
+    #Jackknife everything and output results
+    #compute_hmcf_jk(outpath,DD_all,DR_all,RD_all,RRa,ndivs)
 
     print "HMCF JK not implemented yet!"
     return
