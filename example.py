@@ -25,7 +25,7 @@ particle_mass = 3.98769e10 #Msun/h
 edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
 
 #Step 2
-my_encore = encore.encore("./output/",particle_mass,do_JK=True)
+my_encore = encore.encore(outpath="./output/",particle_mass=particle_mass,do_JK=True)
 
 #Step 3
 my_encore.reduce_halo_catalogs()

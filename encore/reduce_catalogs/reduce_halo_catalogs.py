@@ -15,7 +15,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def reduce_halo_catalog(outpath,pmass,do_JK,ndivs):
+def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
     print "Reducing halo catalog."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
     if os.path.exists(redpath): print "Reduced halo catalog already exists."
