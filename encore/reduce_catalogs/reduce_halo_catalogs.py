@@ -18,15 +18,14 @@ if 'n' in indices:
     n_index = indices['n']
 else:
     n_index = None
-    print "no n index"
+    print "\tWARNING: Particle number index missing."
 
 def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
     print "Reducing halo catalog."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
-    redpath2= outpath+"/reduced_halo_cats/test_reduced_halo_cat.txt"
     if os.path.exists(redpath): print "Reduced halo catalog already exists."
     else: 
-        outfile = open(redpath2,"w")
+        outfile = open(redpath,"w")
         with open(halopath) as infile:
             if n_index is not None:
                 for line in infile:
@@ -45,6 +44,7 @@ def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
                     M = float(parts[m_index])
                     Np = int(M/pmass+0.01) #extra added for rounding
                     if Np >= 200:outfile.write(line)
+        outfile.close()
     if do_JK: jackknife_halo_catalog(outpath,ndivs)
     return
 
