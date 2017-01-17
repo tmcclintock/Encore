@@ -14,13 +14,37 @@ x_index = indices['x']
 y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
+if 'n' in indices:
+    n_index = indices['n']
+else:
+    n_index = None
+    print "no n index"
 
 def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
     print "Reducing halo catalog."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    redpath2= outpath+"/reduced_halo_cats/test_reduced_halo_cat.txt"
     if os.path.exists(redpath): print "Reduced halo catalog already exists."
     else: 
-        print "Not implemented yet."
+        outfile = open(redpath2,"w")
+        with open(halopath) as infile:
+            if n_index is not None:
+                for line in infile:
+                    if line[0] is "#": 
+                        outfile.write(line)
+                        continue
+                    parts = line.split()
+                    Np = int(parts[n_index])
+                    if Np >= 200:outfile.write(line)
+            else:
+                for line in infile:
+                    if line[0] is "#": 
+                        outfile.write(line)
+                        continue
+                    parts = line.split()
+                    M = float(parts[m_index])
+                    Np = int(M/pmass+0.01) #extra added for rounding
+                    if Np >= 200:outfile.write(line)
     if do_JK: jackknife_halo_catalog(outpath,ndivs)
     return
 
