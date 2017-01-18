@@ -5,7 +5,7 @@ There is a unit test at the bottom of this file.
 """
 
 class encore(object):
-    def __init__(self,halopath='NOT INITIALIZED',dmpath='NOT INITIALIZED',
+    def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
                  outpath="./",particle_mass=3e10,do_JK=False,ndivs=2):
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath
@@ -59,6 +59,18 @@ class encore(object):
         import hhcf
         if do_JK is None: do_JK = self.do_JK
         hhcf.compute_hhcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
+        return
+
+    def down_sample_dm(self,DSF=1000):
+        """
+        Down sample the dark matter particles by a factor of DSF,
+        which is short for "down sampling factor".
+        """
+        import down_sampling
+        #if self.dmpath is None: 
+        #    raise Exception("Must set dmpath before downsampling.")
+        #else:
+        down_sampling.down_sampling.down_sample(self.dmpath,DSF)
         return
 
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
