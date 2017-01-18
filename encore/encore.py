@@ -67,9 +67,6 @@ class encore(object):
         which is short for "down sampling factor".
         """
         import down_sampling
-        #if self.dmpath is None: 
-        #    raise Exception("Must set dmpath before downsampling.")
-        #else:
         down_sampling.down_sampling.down_sample(self.dmpath,DSF)
         return
 

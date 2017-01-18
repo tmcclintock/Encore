@@ -4,6 +4,10 @@ test_data
 # the output directory
 output
 
+# the compiled files in the subsample directory
+encore/down_sampling/subsample_code/subamp_parts
+encore/down_sampling/subsample_code/*.o
+
 # emacs backup files
 *~
 
