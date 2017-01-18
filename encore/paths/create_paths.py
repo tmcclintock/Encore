@@ -10,6 +10,9 @@ def create_paths(outpath):
     #Create general halo catalog directories
     os.system("mkdir -p %s"%outpath+"/reduced_halo_cats")
     os.system("mkdir -p %s"%outpath+"/JK_halo_cats")
+
+    #Create the down sampled DM particle directory
+    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
     
     #Create the mass function output directories
     os.system("mkdir -p %s"%outpath+"/mass_function/full_N")

@@ -30,7 +30,6 @@ my_encore = encore.encore(outpath="./output/",particle_mass=particle_mass,do_JK=
 
 #Step 3
 my_encore.reduce_halo_catalogs()
-my_encore.down_sample_dm()
 
 #Step 4
 my_encore.compute_mass_function(do_JK=True)
