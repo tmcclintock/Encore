@@ -67,7 +67,7 @@ class encore(object):
         which is short for "down sampling factor".
         """
         import down_sampling
-        down_sampling.down_sampling.down_sample(self.dmpath,DSF)
+        down_sampling.down_sampling.down_sample(self.outpath,self.dmpath,DSF)
         return
 
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
