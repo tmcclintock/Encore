@@ -21,7 +21,8 @@ def plot_MF(lM,N,N_err):
     ylims = ax.get_ylim()
     ax.set_ylabel(r"${\rmNumber\ of\ halos}$",fontsize=24)
     plt.subplots_adjust(bottom=0.15,left=0.15,hspace=0.001)
-    plt.title(r"${\rm Halo\ mass\ function\ at\ }z=3$",fontsize=18)
+    plt.title(r"${\rm Halo\ mass\ function\ at\ }z=0.5$",fontsize=18)
+    plt.gcf().savefig("plots/MF_example.png")
     plt.show()
     plt.close()
 
@@ -42,9 +43,32 @@ def plot_HHCF(R,xi,xi_err):
     ylims = ax.get_ylim()
     ax.set_ylabel(r"$\xi_{\rm hh}$",fontsize=24)
     plt.subplots_adjust(bottom=0.15,left=0.15,hspace=0.001)
-    plt.title(r"${\rm Halo-halo\ correlation\ function\ at\ }z=3$",fontsize=18)
+    plt.title(r"${\rm Halo-halo\ correlation\ function\ at\ }z=0.5$",fontsize=18)
+    plt.gcf().savefig("plots/HHCF_example.png")
     plt.show()
     plt.close()
     return
 
 plot_HHCF(R,xi,xi_err)
+
+#Read in the HM_CF data
+data_path = "./output/halomatter_correlation_function/full_hmcf/full_hmcf.txt"
+data = np.genfromtxt(data_path)
+R = data[:,0]
+xi = data[:,3]
+xi_err = data[:,4]
+def plot_HMCF(R,xi,xi_err):
+    fig,ax = plt.subplots(1,1)
+    ax.errorbar(R,xi,yerr=xi_err)
+    ax.set_yscale('log')
+    ax.set_xscale('log')
+    ax.set_xlabel(r"$R\ [{\rm Mpc}/h]$",fontsize=24)
+    ylims = ax.get_ylim()
+    ax.set_ylabel(r"$\xi_{\rm hm}$",fontsize=24)
+    plt.subplots_adjust(bottom=0.15,left=0.15,hspace=0.001)
+    plt.title(r"${\rm Halo-matter\ correlation\ function\ at\ }z=0.5$",fontsize=18)
+    plt.gcf().savefig("plots/HMCF_example.png")
+    plt.show()
+    plt.close()
+    return
+plot_HMCF(R,xi,xi_err)
