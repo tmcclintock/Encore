@@ -16,6 +16,7 @@ z_index = indices['z']
 m_index = indices['m']
 
 def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
+    print "Computing mass function."
     #Step 1: figure out the Min/Max masses
     if limits is None: 
         if os.path.exists(outpath+"/info_files/mass_limits.txt"):
@@ -23,6 +24,7 @@ def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
         else: 
             limits = find_mass_limits(outpath)
             np.savetxt(outpath+"/info_files/mass_limits.txt",limits)
+    print "\tUsing M_min = %.2e and M_max = %.2e"%(limits[0],limits[1])
 
     #Step 2: calcalate the full mass function
     calculate_full_mass_function(outpath,limits,nbins)
@@ -31,7 +33,7 @@ def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
     if do_JK:
         calculate_JK_mass_function(outpath,limits,nbins,ndivs)
     
-    print "Mass function successfully computed."
+    print "\tMass function successfully computed."
     return
 
 def find_mass_limits(outpath):
@@ -48,6 +50,7 @@ def find_mass_limits(outpath):
     return np.array([mmin,mmax])
 
 def calculate_full_mass_function(outpath,limits,nbins):
+    print "\tFinding full mass function."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
     fullpath = outpath+"/mass_function/full_N/full_N.txt"
     N = np.zeros((nbins)) #Holds the mass function
@@ -70,10 +73,10 @@ def calculate_full_mass_function(outpath,limits,nbins):
     for i in range(len(bins)):
         outfile.write("%.4e\t%.4e\t%d\n"%(bins[i,0],bins[i,1],N[i]))
     outfile.close()
-    print "Successfully created full N(M)."
     return
 
 def calculate_JK_mass_function(outpath,limits,nbins,ndivs):
+    print "\tFinding JK mass function."
     #First create singles
     calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs)
     #Now recombine
@@ -108,7 +111,7 @@ def make_data_and_cov(outpath,nbins,ndivs,N):
     for i in range(nbins):
         outfile.write("%.4e\t%.4e\t%d\t%e\n"%(bins[i,0],bins[i,1],N[i],np.sqrt(cov[i,i])))
     outfile.close()
-    print "Final mass function JK data and covariance matrix created."
+    print "\tFinal mass function JK data and covariance matrix created."
     return
 
 def combine_JK_mass_function(outpath,nbins,ndivs):
@@ -133,7 +136,7 @@ def combine_JK_mass_function(outpath,nbins,ndivs):
         for j in range(nbins):
             outfile.write("%.4e\t%.4e\t%d\n"%(bins[j,0],bins[j,1],Nout[j]))
         outfile.close()
-    print "Successfully combined JK N(M) files."
+    print "\tSuccessfully combined JK N(M) files."
     return N
 
 def calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs):
@@ -166,4 +169,5 @@ def calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs):
         for j in range(len(bins)):
             outfile.write("%.4e\t%.4e\t%d\n"%(bins[j,0],bins[j,1],N[j]))
         outfile.close()
-    print "Successfully created JK N(M) singles."
+    print "\tJK mass function singles created."
+    return

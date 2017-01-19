@@ -46,9 +46,11 @@ def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
                     if Np >= 200:outfile.write(line)
         outfile.close()
     if do_JK: jackknife_halo_catalog(outpath,ndivs)
+    print "\tHalo catalogs reduced."
     return
 
 def jackknife_halo_catalog(outpath,ndivs):
+    print "\tJackknifing halo catalog."
     if os.path.exists(outpath+"/info_files/spatial_limits.txt"):
         limits = np.loadtxt(outpath+"/info_files/spatial_limits.txt")
     else:
@@ -79,10 +81,10 @@ def jackknife_halo_catalog(outpath,ndivs):
         jkarray[index].write(line)
             
     for i in range(Njks): jkarray[i].close()
-    print "JK halo catalogs complete."
     return
 
 def find_spatial_limits(outpath):
+    print "\tFinding spatial limits."
     xmin,xmax = 1e99,-1e99
     ymin,ymax = zmin,zmax = xmin,xmax
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"

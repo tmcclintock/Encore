@@ -4,6 +4,7 @@ Create the paths to the output directories.
 import os
 
 def create_paths(outpath):
+    print "Creating directories."
     #Create the info files directories
     os.system("mkdir -p %s"%outpath+"/info_files")
 
@@ -20,11 +21,11 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/mass_function/JK_combined_N")
     os.system("mkdir -p %s"%outpath+"/mass_function/cov_matrix")
     os.system("mkdir -p %s"%outpath+"/mass_function/final_mass_function")
-    print "Mass function directories created."
+    print "\tMass function directories created."
 
     #Create the randoms directories
     os.system("mkdir -p %s"%outpath+"/randoms")
-    print "Random directories created."
+    print "\tRandom directories created."
 
     #Create the halo-halo correlation function output directories
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/full_hhcf")
@@ -32,7 +33,7 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_combined")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/cov_matrix")
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/final_hhcf")
-    print "Halo-halo correlation function directories created."
+    print "\tHalo-halo correlation function directories created."
 
     #Create the halo-halo correlation function output directories
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/full_hmcf")
@@ -40,7 +41,7 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_combined")
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/cov_matrix")
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/final_hmcf")
-    print "Halo-matter correlation function directories created."
+    print "\tHalo-matter correlation function directories created."
 
     print "MM Correlation function directory not implemented yet!"
     
