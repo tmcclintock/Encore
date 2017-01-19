@@ -6,6 +6,8 @@ try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 try: import treecorr
 except ImportError: raise Exception("Must install treecorr.")
+try: import pygadgetreader as pgr
+except ImportError: raise Exception("Must install pygadgetreader.")
 
 #Pull out the indices
 indices = {}
@@ -18,7 +20,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs):
+def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
     """
     Compute the halo-matter correlation function.
 
@@ -43,59 +45,66 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs):
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
-    halorandpath = outpath+"/randoms/jk_halo_random.txt"
-    dmrandpath   = outpath+"/randoms/jk_dm_random.txt"
+    halorandpath = outpath+"/randoms/full_halo_random.txt"
+    dmrandpath   = outpath+"/randoms/full_dm_random.txt"
     if os.path.exists(halorandpath) and os.path.exists(dmrandpath): 
         halorandoms = np.loadtxt(halorandpath)
         dmrandoms = np.loadtxt(dmrandpath)
     else: raise Exception("Must create random catalog first.")
     print "Random catalogs loaded.\nUsing random catalogs with:"
-    print "\tN_halo_randoms JK = %d"%len(halorandoms)
-    print "\tN_dm_randoms JK   = %d"%len(dmrandoms)
+    print "\tN_halo_randoms full = %d"%len(halorandoms)
+    print "\tN_dm_randoms full   = %d"%len(dmrandoms)
 
-    #Step 3: calculate the full HH correlation function
-    calcalate_hmcf(outpath,nbins,limits,edges,halorandoms,dmrandoms,ndivs)
+    #Step 3: calculate the full HM correlation function
+    calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
 
+    print "HMCF JK not implemented yet!"
     print "Halo-matter correlation function not implemented yet!"
     return
 
-def calcalate_hmcf(outpath,nbins,limits,edges,halorandoms,dmrandoms,ndivs):
+def calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF):
     """
     Calcualte the halo-matter correlation function.
-
-    Note: both set of randoms are already jackknifed.
     """
-    #Jackknife subregion step size
-    step = (edges[1]-edges[0])/ndivs
-    Njk = int(ndivs**3)
+    print "Calculating full halo-matter correlation function."
+    #Read in the halos
+    redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    infile = open(redpath,"r")
+    halos = np.zeros((int(Nh),3))
+    i = 0
+    for line in infile:
+        if line[0] is "#": continue
+        parts = line.split()
+        halos[i,:] = float(parts[x_index]),float(parts[y_index]),float(parts[z_index])
+        i+=1
+    infile.close()
 
-    #Read in all halos; Note: the DM particles will be read in one at a time
-    all_halos = read_halos(outpath,Njk)
+    #Read in the dm particles
+    dmpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF
+    dm = pgr.readsnap(dmpath,"pos","dm")
 
     #Treecorr interface
     config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
-
-    #Calculate RR once
     halorandom_cat = treecorr.Catalog(x=halorandoms[:,0],y=halorandoms[:,1],z=halorandoms[:,2],config=config)
     dmrandom_cat   = treecorr.Catalog(x=dmrandoms[:,0],y=dmrandoms[:,1],z=dmrandoms[:,2],config=config)
-    RRa = treecorr.NNCorrelation(config)
-    RRa.process(halorandom_cat,dmrandom_cat)
-    print "HMCF RR autocorrelation calculated."
+    halo_cat = treecorr.Catalog(x=halos[:,0],y=halos[:,1],z=halos[:,2],config=config)
+    dm_cat = treecorr.Catalog(x=dm[:,0],y=dm[:,1],z=dm[:,2],config=config)
 
-    #Calculate all DR/RD pairs
-    #NOTE: DR is for halos and RD is for dark matter
-    #DR_all = compute_DR(outpath,config,step,halorandoms,ndivs)
-    #RD_all,mapping = compute_RD(config,step,dmrandoms,ndivs) #NEED TO ADD A DM PATH!!
+    DD = treecorr.NNCorrelation(config)
+    DR = treecorr.NNCorrelation(config)
+    RD = treecorr.NNCorrelation(config)
+    RR = treecorr.NNCorrelation(config)
 
-    #Calculate all DD pairs
-    #DD_all = compute_DD(outpath,dmpath,config,step,ndivs)
-    
-    #Jackknife everything and output results
-    #compute_hmcf_jk(outpath,DD_all,DR_all,RD_all,RRa,ndivs)
+    DD.process(halo_cat,dm_cat)
+    DR.process(halo_cat,halorandom_cat)
+    RD.process(dm_cat,dmrandom_cat)
+    RR.process(halorandom_cat,dmrandom_cat)
+    DD.write(outpath+"/halomatter_correlation_function/full_hmcf/full_hmcf.txt",RR,DR,RD)
 
-    print "HMCF JK not implemented yet!"
+    print "\tHalo-matter correlation function full complete."
     return
 
+#MOVE THE BELOW TO A JK FILE
 def read_halos(outpath,Njk):
     all_halos = []
     jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"

@@ -5,7 +5,7 @@ import os,sys
 try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 
-def create_halo_random_catalog(outpath,edges,Nh,ndivs):
+def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
     """
     Create random catalogs for the full region
     and a JK subregion.
@@ -14,11 +14,11 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     Nr = int(M*Nh) #Randoms number
     Njk = ndivs**3
     Nrjk = int(Nr/Njk)
-    Nrjkdm = Nrjk*2#00 #Halos have to have at LEAST 200 particles
+    Nrdm = int(Nr*1) #Arbitrary amount
+    Nrjkdm = int(Nrdm/Njk)
     print "Creating random catalogs with:"
     print "\tN_halo_randoms full = %d"%Nr
     print "\tN_halo_randoms/JK   = %d"%Nrjk
-    print "\tN_DM_randoms/JK     = %d"%Nrjkdm
     dl,dr = edges
     width = dr-dl
     x = np.random.rand(Nr)*width
@@ -34,11 +34,20 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     posjk = np.array([xjk,yjk,zjk]).T
     np.savetxt(outpath+"/randoms/jk_halo_random.txt",posjk)
 
-    xjkdm = np.random.rand(Nrjkdm)*widthjk
-    yjkdm = np.random.rand(Nrjkdm)*widthjk
-    zjkdm = np.random.rand(Nrjkdm)*widthjk
-    posjk = np.array([xjkdm,yjkdm,zjkdm]).T
-    np.savetxt(outpath+"/randoms/jk_dm_random.txt",posjk)
+    if do_DM:
+        print "\tN_DM_randoms full   = %d"%Nrdm
+        print "\tN_DM_randoms/JK     = %d"%Nrjkdm
+        x = np.random.rand(Nrdm)*width
+        y = np.random.rand(Nrdm)*width
+        z = np.random.rand(Nrdm)*width
+        pos = np.array([x,y,z]).T
+        np.savetxt(outpath+"/randoms/full_dm_random.txt",pos)
+
+        xjk = np.random.rand(Nrjkdm)*widthjk
+        yjk = np.random.rand(Nrjkdm)*widthjk
+        zjk = np.random.rand(Nrjkdm)*widthjk
+        posjk = np.array([xjk,yjk,zjk]).T
+        np.savetxt(outpath+"/randoms/jk_dm_random.txt",posjk)
 
     print "Creation of random catalogs complete."
     return

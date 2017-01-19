@@ -6,13 +6,14 @@ There is a unit test at the bottom of this file.
 
 class encore(object):
     def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
-                 outpath="./",particle_mass=3e10,do_JK=False,ndivs=2):
+                 outpath="./",particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath
         self.dmpath = dmpath
         self.outpath = outpath
         self.do_JK = do_JK
         self.ndivs = ndivs
+        self.DSF = DSF
         self.create_paths()
 
     def create_paths(self):
@@ -36,8 +37,7 @@ class encore(object):
         Create random catalogs.
         """
         import randoms
-        randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs)
-        print "Only halo randoms implemented right now!"
+        randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs,do_DM)
         return
 
     def compute_mass_function(self,nbins=10,do_JK=None):
@@ -61,12 +61,14 @@ class encore(object):
         hhcf.compute_hhcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
-    def down_sample_dm(self,DSF=1000):
+    def down_sample_dm(self,DSF=None):
         """
         Down sample the dark matter particles by a factor of DSF,
         which is short for "down sampling factor".
         """
         import down_sampling
+        if DSF is None:DSF = self.DSF
+        else: self.DSF = DSF
         down_sampling.down_sampling.down_sample(self.outpath,self.dmpath,DSF)
         return
 
@@ -79,7 +81,7 @@ class encore(object):
         """
         import hmcf
         if do_JK is None: do_JK = self.do_JK
-        hmcf.compute_hmcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
+        hmcf.compute_hmcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs,self.DSF)
         return
 
 if __name__=="__main__":
@@ -88,7 +90,7 @@ if __name__=="__main__":
     my_encore.reduce_halo_catalogs()
     my_encore.compute_mass_function(do_JK=True)
     edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
-    my_encore.create_random_catalogs(edges,N=100000)
+    my_encore.create_random_catalogs(edges,N=100000,do_DM=True)
     my_encore.compute_hhcf(edges,do_JK=True)
     my_encore.compute_hmcf(edges,do_JK=True)
     print "Unit test complete"
