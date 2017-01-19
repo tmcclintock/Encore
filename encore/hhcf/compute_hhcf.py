@@ -30,16 +30,17 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    print "Calculating halo-halo mass function."
     #Step 1: calculate the mean masses
     if os.path.exists(outpath+"/info_files/halo_mass_info.txt"):
         halo_mass_info = np.loadtxt(outpath+"/info_files/halo_mass_info.txt")
     else:
         halo_mass_info = calculate_mean_mass(outpath,do_JK,ndivs)
         np.savetxt(outpath+"/info_files/halo_mass_info.txt",halo_mass_info)
-    print "Halo masses averaged, results:"
-    print "\tMmean  = %e"%halo_mass_info[0]
-    print "\tMtotal = %e"%halo_mass_info[1]
-    print "\tNhalos = %d"%halo_mass_info[2]
+    print "\tHalo masses averaged, results:"
+    print "\t\tMmean  = %e"%halo_mass_info[0]
+    print "\t\tMtotal = %e"%halo_mass_info[1]
+    print "\t\tNhalos = %d"%halo_mass_info[2]
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
@@ -49,9 +50,9 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
     else: raise Exception("Must create random catalog first.")
     if do_JK: randomsjk = np.loadtxt(jkrandpath)
     else: randomsjk = None
-    print "Random catalogs loaded.\nUsing random catalogs with:"
-    print "\tN_randoms full = %d"%len(randoms)
-    if do_JK: print "\tN_randoms JK   = %d"%len(randomsjk)
+    print "\tRandom catalogs loaded. Using random catalogs with:"
+    print "\t\tN_randoms full = %d"%len(randoms)
+    if do_JK: print "\t\tN_randoms JK   = %d"%len(randomsjk)
 
     #Step 3: calculate the full HH correlation function
     calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms)
@@ -91,7 +92,7 @@ def calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms):
     RR.process(random_cat)
     DD.write(outpath+"/halohalo_correlation_function/full_hhcf/full_hhcf.txt",RR,DR)
 
-    print "Calculating the FULL hh correlation function complete."
+    print "\tFull halo-halo correlation function complete."
     return
 
 def calculate_mean_mass(outpath,do_JK,ndivs):
@@ -111,5 +112,5 @@ def calculate_mean_mass(outpath,do_JK,ndivs):
         Mtotal += m
         N += 1
     Mmean = Mtotal/N
-    print "Mean masses for JK subregions not implemented yet!"
+    print "\tMean masses for JK subregions not implemented yet!"
     return [Mmean,Mtotal,N]

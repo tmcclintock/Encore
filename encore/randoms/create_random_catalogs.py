@@ -49,5 +49,5 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
         posjk = np.array([xjk,yjk,zjk]).T
         np.savetxt(outpath+"/randoms/jk_dm_random.txt",posjk)
 
-    print "Creation of random catalogs complete."
+    print "\tRandom catalogs created."
     return

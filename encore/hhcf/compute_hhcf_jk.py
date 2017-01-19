@@ -31,6 +31,7 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    print "\tComputing JK HHCF."
     #Jackknife subregion step size
     step = (edges[1]-edges[0])/ndivs
     Njk = int(ndivs**3)
@@ -71,7 +72,7 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     xi_true = data[:,3]
     make_final_hhcf_data(outpath,R,xi_true,err)
 
-    print "HHCF JK complete."
+    print "\tHHCF JK complete."
     return
 
 def make_final_hhcf_data(outpath,R,xi,err):
@@ -84,7 +85,7 @@ def make_final_hhcf_data(outpath,R,xi,err):
     for i in range(len(R)):
         outfile.write("%.4e\t%.4e\t%.4e\n"%(R[i],xi[i],err[i]))
     outfile.close()
-    print "Final HHCF JK data created."
+    print "\tFinal HHCF JK data created."
     return
     
 def calculate_cov_matrix(outpath,xi_all,nbins,Njk):
@@ -135,7 +136,7 @@ def calculate_xi_LOO(RRa,DDt,DRt,RRt,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk
         #Calculate xi_LOO
         xi,varxi = DDl.calculateXi(RRl,DRl)
         xi_all.append(xi)
-    print "Leave-one-out HHCFs calculated."
+    print "\t\tLeave-one-out HHCFs calculated."
     return np.array(xi_all)
 
 def calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config):
@@ -153,7 +154,7 @@ def calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config):
         RRt.weight[:]+=0.5*RRc_all[i].weight[:]
         RRt.npairs[:]+=0.5*RRc_all[i].npairs[:]
         RRt.tot+=0.5*RRc_all[i].tot
-    print "Resumming HHCF JK total complete."
+    print "\t\tResumming HHCF JK total complete."
     return DDt,DRt,RRt
 
 def calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk):
@@ -228,7 +229,7 @@ def calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk):
         DR.process(halo_cat,random_cat)
         DDa_all.append(DD)
         DRa_all.append(DR)
-    print "For HHCF all DD and DR autocorrelations computed."
+    print "\t\tHHCF DD and DR autocorrelations computed."
     return DDa_all,DRa_all
 
 def read_halos(outpath,Njk):
