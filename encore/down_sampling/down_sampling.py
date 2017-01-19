@@ -23,8 +23,10 @@ def down_sample(outpath,dmpath,DSF):
     Nds = Ndm/DSF
 
     DSpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF
-    command = dirname+"/subsample_code/subsamp_parts LGADGET %s %d %s"%(dmpath,Nds,DSpath)
-    os.system(command)
+    if os.path.exists(DSpath): print "Down sampled DM catalog already exists."
+    else:
+        command = dirname+"/subsample_code/subsamp_parts LGADGET %s %d %s"%(dmpath,Nds,DSpath)
+        os.system(command)
 
     print "\tDown sampling complete."
     return
