@@ -16,9 +16,10 @@ particles.
 correlation functions. To accomplish the latter you
 need to create random catalogs.
 """
+
+#Step 0
 import sys
 sys.path.insert(0,"../Encore/")
-
 import encore
 
 #Step 1
