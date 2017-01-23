@@ -49,10 +49,10 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
 
     #Get all autocorrelations
     #These are all of length Njks
-    DDa_all, DRa_all = calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk)
+    DDa_all, DRa_all = calculate_autos(config,all_halos,randoms,step,ndivs,Njk)
 
     #Get all cross correlations
-    DDc_all,DRc_all,RRc_all = calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk)
+    DDc_all,DRc_all,RRc_all = calculate_cross(config,all_halos,randoms,step,ndivs,Njk)
 
     #Find the totals
     DDt,DRt,RRt = calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config)
@@ -157,7 +157,7 @@ def calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config):
     print "\t\tResumming HHCF JK total complete."
     return DDt,DRt,RRt
 
-def calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk):
+def calculate_cross(config,all_halos,randoms,step,ndivs,Njk):
     """
     Calcualte the DD, DR and RR cross correlations
     """
@@ -210,7 +210,7 @@ def calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk):
             RRc_all[index2]+=RR
     return DDc_all,DRc_all,RRc_all
 
-def calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk):
+def calculate_autos(config,all_halos,randoms,step,ndivs,Njk):
     """
     Calculate the DD and DR autocorrelations
     """
