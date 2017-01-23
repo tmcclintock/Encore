@@ -14,6 +14,7 @@ def create_paths(outpath):
 
     #Create the down sampled DM particle directory
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
+    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
     
     #Create the mass function output directories
     os.system("mkdir -p %s"%outpath+"/mass_function/full_N")
