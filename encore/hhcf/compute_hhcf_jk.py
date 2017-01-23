@@ -233,6 +233,12 @@ def calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk):
     return DDa_all,DRa_all
 
 def read_halos(outpath,Njk):
+    """
+    Read in halos from the jackknife files.
+    Returns an array of Njk X N_halos_i X 3 where
+    there are N_halos_i in the i'th JK file.
+    This is not a constant number.
+    """
     all_halos = []
     jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
     for index in range(Njk):

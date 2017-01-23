@@ -58,6 +58,16 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
     #Step 3: calculate the full HM correlation function
     calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
 
+    #Step 4: calculate the HH correlation function within JK subregions
+    if do_JK:
+        halorandpath = outpath+"/randoms/jk_halo_random.txt"
+        dmrandpath   = outpath+"/randoms/jk_dm_random.txt"
+        if os.path.exists(halorandpath) and os.path.exists(dmrandpath): 
+            halorandoms = np.loadtxt(halorandpath)
+            dmrandoms = np.loadtxt(dmrandpath)
+        import compute_hmcf_jk
+        compute_hmcf_jk.calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,DSF)
+
     print "HMCF JK not implemented yet!"
     print "Halo-matter correlation function not implemented yet!"
     return
@@ -108,7 +118,7 @@ def calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF):
 def read_halos(outpath,Njk):
     all_halos = []
     jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
-    for index in range(Njk):
+    for index in xrange(0,Njk):
         infile = open(jkpath%index,"r")
         halos = [] #Will be Nhjk X 3
         for line in infile:
