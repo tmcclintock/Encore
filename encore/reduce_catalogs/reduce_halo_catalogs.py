@@ -64,7 +64,7 @@ def jackknife_halo_catalog(outpath,ndivs):
     jkoutbase = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
     jkarray = []
     Njks = ndivs**3
-    for i in range(Njks): jkarray.append(open(jkoutbase%i,"w"))
+    for i in xrange(0,Njks): jkarray.append(open(jkoutbase%i,"w"))
     
     infile = open(redpath,"r")
     for line in infile:

@@ -7,6 +7,8 @@ try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 try: import treecorr
 except ImportError: raise Exception("Must install treecorr.")
+try: import pygadgetreader as pgr
+except ImportError: raise Exception("Must install pygadgetreader.")
 
 #Pull out the indices
 indices = {}
@@ -40,7 +42,7 @@ def calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,
     all_halos = read_halos(outpath,Njk)
 
     #Read in all dm
-    all_dms = read_dm(outpath,Njk,DSF)
+    all_dms = read_dm(outpath,Njk,edges,step,DSF)
 
     #Treecorr interface
     config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
@@ -58,7 +60,7 @@ def read_halos(outpath,Njk):
     """
     all_halos = []
     jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
-    for index in range(Njk):
+    for index in xrange(0,Njk):
         infile = open(jkpath%index,"r")
         halos = [] #Will be Nhjk X 3
         for line in infile:
@@ -70,15 +72,19 @@ def read_halos(outpath,Njk):
         all_halos.append(halos)
     return np.array(all_halos)
 
-def read_dm(outpath,Njk,DFS):
+def read_dm(outpath,Njk,edges,step,DSF):
     """
-    Read in the dark matter particles,
-    and then relable into jackknife subregions.
-    
+    Read in dms from the jackknife files.
+    Returns an array of Njk X N_dm_i X 3 where
+    there are N_dm_i in the i'th JK file.
+    This is not a constant number.
     """
-    dmpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF
-    dm = pgr.readsnap(dmpath,"pos","dm")
+    dmpath = outpath+"/down_sampled_dm/JK_dm_cats/jk_dm_cat_%d.txt"
 
     all_dms = []
     for index in xrange(0,Njk):
-        
+        dms = np.genfromtxt(dmpath%index)
+        all_dms.append(dms)
+    all_dms = np.array(all_dms)
+    return all_dms
+

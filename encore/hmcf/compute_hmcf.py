@@ -56,7 +56,7 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
     print "\tN_dm_randoms full   = %d"%len(dmrandoms)
 
     #Step 3: calculate the full HM correlation function
-    calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
+    #calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
 
     #Step 4: calculate the HH correlation function within JK subregions
     if do_JK:
@@ -113,19 +113,3 @@ def calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF):
 
     print "\tHalo-matter correlation function full complete."
     return
-
-#MOVE THE BELOW TO A JK FILE
-def read_halos(outpath,Njk):
-    all_halos = []
-    jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
-    for index in xrange(0,Njk):
-        infile = open(jkpath%index,"r")
-        halos = [] #Will be Nhjk X 3
-        for line in infile:
-            if line[0] is "#": continue
-            parts = line.split()
-            halos.append([float(parts[x_index]),float(parts[y_index]),float(parts[z_index])])
-        halos = np.array(halos)
-        infile.close()
-        all_halos.append(halos)
-    return np.array(all_halos)

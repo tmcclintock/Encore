@@ -46,7 +46,7 @@ def jackknife_dm(outpath,DSF,ndivs):
     dy = (limits[1,1]-limits[1,0])/ndivs
     dz = (limits[2,1]-limits[2,0])/ndivs
 
-    jkoutbase = outpath+"/down_sampled_dm/JK_dm_cats/jk_halo_cat_%d.txt"
+    jkoutbase = outpath+"/down_sampled_dm/JK_dm_cats/jk_dm_cat_%d.txt"
     jkarray = []
     Njks = ndivs**3
     for i in xrange(0,Njks): jkarray.append(open(jkoutbase%i,"w"))

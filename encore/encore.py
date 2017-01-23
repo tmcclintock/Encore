@@ -72,9 +72,9 @@ class encore(object):
         down_sampling.down_sampling.down_sample(self.outpath,self.dmpath,DSF)
         return
 
-    def jackknife_dm(self,DSF=None
-        if do_JK is None: do_JK = self.do_JK
-        if do_JK: down_sampling.down_sampling.jackknife_dm(self.outpath,DSF,self.ndivs)
+    def jackknife_dm(self):
+        import down_sampling
+        down_sampling.down_sampling.jackknife_dm(self.outpath,self.DSF,self.ndivs)
         return
 
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
