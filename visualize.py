@@ -12,7 +12,6 @@ M_bins = data[:,:2]
 lM = np.log10(np.mean(M_bins,1))
 N = data[:,2]
 N_err = data[:,3]
-
 def plot_MF(lM,N,N_err):
     fig,ax = plt.subplots(1,1)
     ax.errorbar(lM,N,yerr=N_err)
@@ -26,7 +25,7 @@ def plot_MF(lM,N,N_err):
     plt.show()
     plt.close()
 
-plot_MF(lM,N,N_err)
+#plot_MF(lM,N,N_err)
 
 #Read in the HH_CF data
 data_path = "./output/halohalo_correlation_function/final_hhcf/final_hhcf.txt"
@@ -49,14 +48,14 @@ def plot_HHCF(R,xi,xi_err):
     plt.close()
     return
 
-plot_HHCF(R,xi,xi_err)
+#plot_HHCF(R,xi,xi_err)
 
 #Read in the HM_CF data
-data_path = "./output/halomatter_correlation_function/full_hmcf/full_hmcf.txt"
+data_path = "./output/halomatter_correlation_function/final_hmcf/final_hmcf.txt"
 data = np.genfromtxt(data_path)
 R = data[:,0]
-xi = data[:,3]
-xi_err = data[:,4]
+xi = data[:,1]
+xi_err = data[:,2]
 def plot_HMCF(R,xi,xi_err):
     fig,ax = plt.subplots(1,1)
     ax.errorbar(R,xi,yerr=xi_err)

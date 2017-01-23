@@ -140,6 +140,10 @@ def calculate_xi_LOO(RRa,DDt,DRt,RRt,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk
     return np.array(xi_all)
 
 def calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config):
+    """
+    Resum the auto and cross correlations
+    to get total quantities.
+    """
     DDt = treecorr.NNCorrelation(config)
     DRt = treecorr.NNCorrelation(config)
     RRt = treecorr.NNCorrelation(config)
@@ -165,12 +169,12 @@ def calculate_cross(config,all_halos,randoms,step,ndivs,Njk):
     DDc_all = []
     DRc_all = []
     RRc_all = []
-    for i in range(Njk):
+    for i in xrange(0,Njk):
         DDc_all.append(treecorr.NNCorrelation(config))
         DRc_all.append(treecorr.NNCorrelation(config))
         RRc_all.append(treecorr.NNCorrelation(config))
         
-    for index1 in range(Njk):
+    for index1 in xrange(0,Njk):
         halos1 = all_halos[index1]
         halo_cat1 = treecorr.Catalog(x=halos1[:,0],
                                      y=halos1[:,1],

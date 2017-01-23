@@ -56,9 +56,9 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
     print "\tN_dm_randoms full   = %d"%len(dmrandoms)
 
     #Step 3: calculate the full HM correlation function
-    #calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
+    calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
 
-    #Step 4: calculate the HH correlation function within JK subregions
+    #Step 4: calculate the HM correlation function within JK subregions
     if do_JK:
         halorandpath = outpath+"/randoms/jk_halo_random.txt"
         dmrandpath   = outpath+"/randoms/jk_dm_random.txt"
