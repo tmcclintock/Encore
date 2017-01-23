@@ -58,7 +58,7 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     DDt,DRt,RRt = calculate_total(RRa,DDa_all,DRa_all,DDc_all,DRc_all,RRc_all,Njk,config)
 
     #Find each of the xi curves
-    xi_all = calculate_xi_LOO(RRa,DDt,DRt,RRt,DDa_all,DRa_all,\
+    xi_all = calculate_xi_LOO(RRa,DDt,DRt,RRt,DDa_all,DRa_all,
                               DDc_all,DRc_all,RRc_all,Njk)
 
     #Find the covariance matrix
@@ -172,23 +172,27 @@ def calculate_cross(outpath,config,all_halos,randoms,step,ndivs,Njk):
         
     for index1 in range(Njk):
         halos1 = all_halos[index1]
-        halo_cat1 = treecorr.Catalog(x=halos1[:,0],y=halos1[:,1],z=halos1[:,2],config=config)
+        halo_cat1 = treecorr.Catalog(x=halos1[:,0],
+                                     y=halos1[:,1],
+                                     z=halos1[:,2],config=config)
         i1 = index1%ndivs
         j1 = (index1/ndivs)%ndivs
         k1 = index1/ndivs**2
-        random_cat1 = treecorr.Catalog(x=randoms[:,0]+i1*step,\
-                                       y=randoms[:,1]+j1*step,\
-                                       z=randoms[:,2]+k1*step,\
+        random_cat1 = treecorr.Catalog(x=randoms[:,0]+i1*step,
+                                       y=randoms[:,1]+j1*step,
+                                       z=randoms[:,2]+k1*step,
                                        config=config)
         for index2 in xrange(index1+1,Njk):
             halos2 = all_halos[index2]
-            halo_cat2 = treecorr.Catalog(x=halos2[:,0],y=halos2[:,1],z=halos2[:,2],config=config)
+            halo_cat2 = treecorr.Catalog(x=halos2[:,0],
+                                         y=halos2[:,1],
+                                         z=halos2[:,2],config=config)
             i2 = index2%ndivs
             j2 = (index2/ndivs)%ndivs
             k2 = index2/ndivs**2
-            random_cat2 = treecorr.Catalog(x=randoms[:,0]+i2*step,\
-                                           y=randoms[:,1]+j2*step,\
-                                           z=randoms[:,2]+k2*step,\
+            random_cat2 = treecorr.Catalog(x=randoms[:,0]+i2*step,
+                                           y=randoms[:,1]+j2*step,
+                                           z=randoms[:,2]+k2*step,
                                            config=config)
             DD = treecorr.NNCorrelation(config)
             DR = treecorr.NNCorrelation(config)
@@ -217,11 +221,11 @@ def calculate_autos(outpath,config,all_halos,randoms,step,ndivs,Njk):
         i = index%ndivs
         j = (index/ndivs)%ndivs
         k = index/ndivs**2
-        random_cat = treecorr.Catalog(x=randoms[:,0]+i*step,\
-                                      y=randoms[:,1]+j*step,\
+        random_cat = treecorr.Catalog(x=randoms[:,0]+i*step,
+                                      y=randoms[:,1]+j*step,
                                       z=randoms[:,2]+k*step,config=config)
-        halo_cat = treecorr.Catalog(x=halos[:,0],\
-                                    y=halos[:,1],\
+        halo_cat = treecorr.Catalog(x=halos[:,0],
+                                    y=halos[:,1],
                                     z=halos[:,2],config=config)
         DD = treecorr.NNCorrelation(config)
         DR = treecorr.NNCorrelation(config)
