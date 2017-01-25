@@ -10,6 +10,10 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
     Create random catalogs for the full region
     and a JK subregion.
     """
+    #Create the randoms output directory
+    os.system("mkdir -p %s"%outpath+"/randoms")
+    print "\tRandom directories created."
+
     M = 1 #Multiplicative factor
     Nr = int(M*Nh) #Randoms number
     Njk = ndivs**3
