@@ -21,6 +21,10 @@ else:
     print "\tWARNING: Particle number index missing."
 
 def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
+    #Create halo catalog directories
+    os.system("mkdir -p %s"%outpath+"/reduced_halo_cats")
+    os.system("mkdir -p %s"%outpath+"/JK_halo_cats")
+
     print "Reducing halo catalog."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
     if os.path.exists(redpath): print "Reduced halo catalog already exists."

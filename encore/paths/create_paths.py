@@ -8,10 +8,6 @@ def create_paths(outpath):
     #Create the info files directories
     os.system("mkdir -p %s"%outpath+"/info_files")
 
-    #Create general halo catalog directories
-    os.system("mkdir -p %s"%outpath+"/reduced_halo_cats")
-    os.system("mkdir -p %s"%outpath+"/JK_halo_cats")
-
     #Create the down sampled DM particle directory
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
