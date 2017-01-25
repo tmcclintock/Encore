@@ -7,12 +7,13 @@ import os
 
 class encore(object):
     def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
-                 randompath=None,outpath="./",
+                 randompath=None,DSdmpath=None,outpath="./",
                  particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath
         self.dmpath = dmpath
         self.randompath = randompath
+        self.DSdmpath = DSdmpath
         self.outpath = outpath
         self.do_JK = do_JK
         self.ndivs = ndivs
@@ -72,7 +73,8 @@ class encore(object):
         import down_sampling
         if DSF is None:DSF = self.DSF
         else: self.DSF = DSF
-        down_sampling.down_sampling.down_sample(self.outpath,self.dmpath,DSF)
+        down_sampling.down_sampling.down_sample(self.outpath,self.dmpath,
+                                                DSF,self.DSdmpath)
         return
 
     def jackknife_dm(self):

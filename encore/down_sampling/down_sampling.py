@@ -15,7 +15,17 @@ try: import pygadgetreader as pgr
 except ImportError: raise Exception("Must install pygadgetreader.")
 
 
-def down_sample(outpath,dmpath,DSF):
+def down_sample(outpath,dmpath,DSF,DSdmpath=None):
+    #Check to see if the downsampling is done already
+    if DSdmpath is not None:
+        if os.path.exists(DSdmpath+"/down_sampled_dm_DSF%d"%DSF):
+            print "Down sampled DM catalog found at %s"%DSdmpath
+            print "\tUsing that instead.\n\tDown sampling complete."
+            return
+        else:
+            print "Down sampled DM path specified but no down sampled catalog found."
+            print "\tCreating a down sampled catalog in %s"%outpath
+
     #Create the directories to put the down-sampling output
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
 
