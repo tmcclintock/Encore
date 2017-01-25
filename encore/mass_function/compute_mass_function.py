@@ -16,10 +16,11 @@ z_index = indices['z']
 m_index = indices['m']
 
 def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
+    print "Computing mass function."
+
     #Step 0: create the paths
     create_mass_function_directories(outpath)
 
-    print "Computing mass function."
     #Step 1: figure out the Min/Max masses
     if limits is None: 
         if os.path.exists(outpath+"/info_files/mass_limits.txt"):

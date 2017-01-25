@@ -30,10 +30,11 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    print "Calculating halo-halo mass function."
+
     #Step 0: create the output directories for HHCF
     create_hhcf_directories(outpath)
 
-    print "Calculating halo-halo mass function."
     #Step 1: calculate the mean masses
     if os.path.exists(outpath+"/info_files/halo_mass_info.txt"):
         halo_mass_info = np.loadtxt(outpath+"/info_files/halo_mass_info.txt")

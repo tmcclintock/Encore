@@ -32,6 +32,8 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    print "Calculating halo-matter correlation function."
+
     #Step 0: create the HMCF output directories
     create_hmcf_directories(outpath)
 
@@ -41,10 +43,10 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
     else:
         halo_mass_info = calculate_mean_mass(outpath,do_JK,ndivs)
         np.savetxt(outpath+"/info_files/halo_mass_info.txt",halo_mass_info)
-    print "Halo masses averaged, results:"
-    print "\tMmean  = %e"%halo_mass_info[0]
-    print "\tMtotal = %e"%halo_mass_info[1]
-    print "\tNhalos = %d"%halo_mass_info[2]
+    print "\tHalo masses averaged, results:"
+    print "\t\tMmean  = %e"%halo_mass_info[0]
+    print "\t\tMtotal = %e"%halo_mass_info[1]
+    print "\t\tNhalos = %d"%halo_mass_info[2]
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
@@ -54,9 +56,9 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
         halorandoms = np.loadtxt(halorandpath)
         dmrandoms = np.loadtxt(dmrandpath)
     else: raise Exception("Must create random catalog first.")
-    print "Random catalogs loaded.\nUsing random catalogs with:"
-    print "\tN_halo_randoms full = %d"%len(halorandoms)
-    print "\tN_dm_randoms full   = %d"%len(dmrandoms)
+    print "\tRandom catalogs loaded.\nUsing random catalogs with:"
+    print "\t\tN_halo_randoms full = %d"%len(halorandoms)
+    print "\t\tN_dm_randoms full   = %d"%len(dmrandoms)
 
     #Step 3: calculate the full HM correlation function
     calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF)
@@ -71,7 +73,6 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
         import compute_hmcf_jk
         compute_hmcf_jk.calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,DSF)
 
-    print "HMCF JK not implemented yet!"
     print "Halo-matter correlation function not implemented yet!"
     return
 

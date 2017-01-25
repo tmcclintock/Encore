@@ -10,6 +10,8 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
     Create random catalogs for the full region
     and a JK subregion.
     """
+    print "Creating random catalogs."
+
     #Create the randoms output directory
     os.system("mkdir -p %s"%outpath+"/randoms")
     print "\tRandom directories created."
@@ -20,9 +22,9 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
     Nrjk = int(Nr/Njk)
     Nrdm = int(Nr*1) #Arbitrary amount
     Nrjkdm = int(Nrdm/Njk)
-    print "Creating random catalogs with:"
-    print "\tN_halo_randoms full = %d"%Nr
-    print "\tN_halo_randoms/JK   = %d"%Nrjk
+    print "\tCreating random catalogs with:"
+    print "\t\tN_halo_randoms full = %d"%Nr
+    print "\t\tN_halo_randoms/JK   = %d"%Nrjk
     dl,dr = edges
     width = dr-dl
     x = np.random.rand(Nr)*width
@@ -39,8 +41,8 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
     np.savetxt(outpath+"/randoms/jk_halo_random.txt",posjk)
 
     if do_DM:
-        print "\tN_DM_randoms full   = %d"%Nrdm
-        print "\tN_DM_randoms/JK     = %d"%Nrjkdm
+        print "\t\tN_DM_randoms full   = %d"%Nrdm
+        print "\t\tN_DM_randoms/JK     = %d"%Nrjkdm
         x = np.random.rand(Nrdm)*width
         y = np.random.rand(Nrdm)*width
         z = np.random.rand(Nrdm)*width
