@@ -16,14 +16,6 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
     
-    #Create the mass function output directories
-    os.system("mkdir -p %s"%outpath+"/mass_function/full_N")
-    os.system("mkdir -p %s"%outpath+"/mass_function/JK_single_N")
-    os.system("mkdir -p %s"%outpath+"/mass_function/JK_combined_N")
-    os.system("mkdir -p %s"%outpath+"/mass_function/cov_matrix")
-    os.system("mkdir -p %s"%outpath+"/mass_function/final_mass_function")
-    print "\tMass function directories created."
-
     #Create the randoms directories
     os.system("mkdir -p %s"%outpath+"/randoms")
     print "\tRandom directories created."

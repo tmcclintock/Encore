@@ -16,6 +16,9 @@ z_index = indices['z']
 m_index = indices['m']
 
 def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
+    #Step 0: create the paths
+    create_mass_function_directories(outpath)
+
     print "Computing mass function."
     #Step 1: figure out the Min/Max masses
     if limits is None: 
@@ -170,4 +173,13 @@ def calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs):
             outfile.write("%.4e\t%.4e\t%d\n"%(bins[j,0],bins[j,1],N[j]))
         outfile.close()
     print "\tJK mass function singles created."
+    return
+
+def create_mass_function_directories(outpath):
+    os.system("mkdir -p %s"%outpath+"/mass_function/full_N")
+    os.system("mkdir -p %s"%outpath+"/mass_function/JK_single_N")
+    os.system("mkdir -p %s"%outpath+"/mass_function/JK_combined_N")
+    os.system("mkdir -p %s"%outpath+"/mass_function/cov_matrix")
+    os.system("mkdir -p %s"%outpath+"/mass_function/final_mass_function")
+    print "\tMass function directories created."
     return
