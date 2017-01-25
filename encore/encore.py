@@ -3,6 +3,7 @@ The encore class.
 
 There is a unit test at the bottom of this file.
 """
+import os
 
 class encore(object):
     def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
@@ -14,15 +15,8 @@ class encore(object):
         self.do_JK = do_JK
         self.ndivs = ndivs
         self.DSF = DSF
-        self.create_paths()
-
-    def create_paths(self):
-        """
-        Create paths to the output directories.
-        """
-        import paths
-        paths.create_paths(self.outpath)
-        return
+        #Make a path for the info files
+        os.system("mkdir -p %s"%outpath+"/info_files")
 
     def reduce_halo_catalogs(self):
         """
