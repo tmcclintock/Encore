@@ -20,7 +20,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
+def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF,DSdmpath):
     """
     Compute the halo-matter correlation function.
 

@@ -48,7 +48,6 @@ def compute_hhcf(outpath,randompath,nbins,limits,edges,do_JK,ndivs):
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
-    if randompath is None: randompath = outpath
     randpath = randompath+"/randoms/full_halo_random.txt"
     jkrandpath = randompath+"/randoms/jk_halo_random.txt"
     if os.path.exists(randpath): randoms = np.loadtxt(randpath)

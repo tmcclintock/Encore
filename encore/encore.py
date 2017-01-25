@@ -41,7 +41,8 @@ class encore(object):
                 print "Creating randoms there."
                 randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs,do_DM)
             return
-            randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs,do_DM)
+        else: self.randompath = self.outpath
+        randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs,do_DM)
         return
 
     def compute_mass_function(self,nbins=10,do_JK=None):
@@ -71,10 +72,21 @@ class encore(object):
         which is short for "down sampling factor".
         """
         import down_sampling
-        if DSF is None:DSF = self.DSF
+        if DSF is None: DSF = self.DSF
         else: self.DSF = DSF
-        down_sampling.down_sampling.down_sample(self.outpath,self.dmpath,
-                                                DSF,self.DSdmpath)
+        if self.DSdmpath is not None:
+            if os.path.exists(self.DSdmpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF):
+                print "Down sampled DM catalog found in %s"%self.DSdmpath
+                print "\tUsing that instead.\n\tDown sampling complete."
+                return
+            else:
+                print "Down sampled DM path specified but no down sampled catalog found.\n\tCreating a down sampled catalog in %s"%outpath
+                down_sampling.down_sampling.down_sample(self.outpath,
+                                                        self.dmpath,DSF)
+                return
+        self.DSdmpath = self.outpath
+        down_sampling.down_sampling.down_sample(self.DSdmpath,
+                                                self.dmpath,DSF)
         return
 
     def jackknife_dm(self):
@@ -91,7 +103,7 @@ class encore(object):
         """
         import hmcf
         if do_JK is None: do_JK = self.do_JK
-        hmcf.compute_hmcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs,self.DSF)
+        hmcf.compute_hmcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs,self.DSF,self.DSdmpath)
         return
 
 if __name__=="__main__":
