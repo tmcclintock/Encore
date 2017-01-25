@@ -12,15 +12,7 @@ def create_paths(outpath):
     os.system("mkdir -p %s"%outpath+"/randoms")
     print "\tRandom directories created."
 
-    #Create the halo-halo correlation function output directories
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/full_hhcf")
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_single")
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/JK_combined")
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/cov_matrix")
-    os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/final_hhcf")
-    print "\tHalo-halo correlation function directories created."
-
-    #Create the halo-halo correlation function output directories
+    #Create the halo-matter correlation function output directories
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/full_hmcf")
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_single")
     os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_combined")

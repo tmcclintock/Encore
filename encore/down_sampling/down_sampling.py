@@ -18,7 +18,6 @@ except ImportError: raise Exception("Must install pygadgetreader.")
 def down_sample(outpath,dmpath,DSF):
     #Create the directories to put the down-sampling output
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
-    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
 
     print "Down sampling on file: %s"%dmpath
     print "\tDSF = %d"%DSF
@@ -40,6 +39,9 @@ def jackknife_dm(outpath,DSF,ndivs):
     Jackknife the dark matter particles from the down-sampled
     dark matter catalog.
     """
+    #Create the output directory for this function
+    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
+
     print "Jackknifing DM particles."
     if os.path.exists(outpath+"/info_files/spatial_limits.txt"):
         limits = np.loadtxt(outpath+"/info_files/spatial_limits.txt")
