@@ -15,7 +15,7 @@ try: import pygadgetreader as pgr
 except ImportError: raise Exception("Must install pygadgetreader.")
 
 
-def down_sample(outpath,dmpath,DSF,DSdmpath=None):
+def down_sample(outpath,dmpath,DSF,DSdmpath):
     #Check to see if the downsampling is done already
     if DSdmpath is not None:
         if os.path.exists(DSdmpath+"/down_sampled_dm_DSF%d"%DSF):
