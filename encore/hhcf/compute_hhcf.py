@@ -18,7 +18,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
+def compute_hhcf(outpath,randompath,nbins,limits,edges,do_JK,ndivs):
     """
     Compute the halo-halo correlation function.
 
@@ -48,8 +48,9 @@ def compute_hhcf(outpath,nbins,limits,edges,do_JK,ndivs):
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
-    randpath = outpath+"/randoms/full_halo_random.txt"
-    jkrandpath = outpath+"/randoms/jk_halo_random.txt"
+    if randompath is None: randompath = outpath
+    randpath = randompath+"/randoms/full_halo_random.txt"
+    jkrandpath = randompath+"/randoms/jk_halo_random.txt"
     if os.path.exists(randpath): randoms = np.loadtxt(randpath)
     else: raise Exception("Must create random catalog first.")
     if do_JK: randomsjk = np.loadtxt(jkrandpath)

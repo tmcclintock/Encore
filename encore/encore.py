@@ -7,10 +7,12 @@ import os
 
 class encore(object):
     def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
-                 outpath="./",particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
+                 randompath=None,outpath="./",
+                 particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath
         self.dmpath = dmpath
+        self.randompath = randompath
         self.outpath = outpath
         self.do_JK = do_JK
         self.ndivs = ndivs
@@ -26,12 +28,19 @@ class encore(object):
         reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(self.halopath,self.outpath,self.particle_mass,self.do_JK,self.ndivs)
         return
 
-    def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False):
+    def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False,recreate=False):
         """
         Create random catalogs.
         """
         import randoms
-        randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs,do_DM)
+        if self.randompath is not None:
+            print "Randompath specified as: %s"%self.randompath
+            if not recreate: print "Using random_catalog file found there."
+            else:
+                print "Creating randoms there."
+                randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs,do_DM)
+            return
+            randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs,do_DM)
         return
 
     def compute_mass_function(self,nbins=10,do_JK=None):
@@ -52,7 +61,7 @@ class encore(object):
         """
         import hhcf
         if do_JK is None: do_JK = self.do_JK
-        hhcf.compute_hhcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs)
+        hhcf.compute_hhcf(self.outpath,self.randompath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
     def down_sample_dm(self,DSF=None):
