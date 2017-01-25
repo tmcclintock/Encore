@@ -7,10 +7,6 @@ def create_paths(outpath):
     print "Creating directories."
     #Create the info files directories
     os.system("mkdir -p %s"%outpath+"/info_files")
-
-    #Create the down sampled DM particle directory
-    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
-    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
     
     #Create the randoms directories
     os.system("mkdir -p %s"%outpath+"/randoms")
