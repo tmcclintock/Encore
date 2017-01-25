@@ -32,6 +32,9 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF):
        do_JK: boolean for wheather to calculate jackknife values
        ndivs: number of JK subregions
     """
+    #Step 0: create the HMCF output directories
+    create_hmcf_directories(outpath)
+
     #Step 1: calculate the mean masses
     if os.path.exists(outpath+"/info_files/halo_mass_info.txt"):
         halo_mass_info = np.loadtxt(outpath+"/info_files/halo_mass_info.txt")
@@ -112,4 +115,13 @@ def calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF):
     DD.write(outpath+"/halomatter_correlation_function/full_hmcf/full_hmcf.txt",RR,DR,RD)
 
     print "\tHalo-matter correlation function full complete."
+    return
+
+def create_hmcf_directories(outpath):
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/full_hmcf")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_single")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_combined")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/cov_matrix")
+    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/final_hmcf")
+    print "\tHalo-matter correlation function directories created."
     return

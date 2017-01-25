@@ -13,12 +13,6 @@ def create_paths(outpath):
     print "\tRandom directories created."
 
     #Create the halo-matter correlation function output directories
-    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/full_hmcf")
-    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_single")
-    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/JK_combined")
-    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/cov_matrix")
-    os.system("mkdir -p %s"%outpath+"/halomatter_correlation_function/final_hmcf")
-    print "\tHalo-matter correlation function directories created."
 
     print "MM Correlation function directory not implemented yet!"
     
