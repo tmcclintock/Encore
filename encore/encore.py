@@ -61,7 +61,8 @@ class encore(object):
         if DSF is None: DSF = self.DSF
         else: self.DSF = DSF
         if not self.down_sampled:
-            down_sampling.down_sampling.down_sample(self.DSdmpath,self.dmpath,DSF)
+            down_sampling.down_sampling.down_sample(self.DSdmpath,
+                                                    self.dmpath,DSF)
             self.down_sampled = True
         else: print "Already down sampled."
         return
@@ -71,7 +72,7 @@ class encore(object):
         Jackknife the down sampled dark matter particle catalog.
         """
         import down_sampling
-        down_sampling.down_sampling.jackknife_dm(self.outpath,
+        down_sampling.down_sampling.jackknife_dm(self.DSdmpath,
                                                  self.DSF,self.ndivs)
         return
 
