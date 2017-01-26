@@ -52,6 +52,29 @@ class encore(object):
         else: print "Random catalogs already created."
         return
 
+    def down_sample_dm(self,DSF=None):
+        """
+        Down sample the dark matter particles by a factor of DSF,
+        which is short for "down sampling factor".
+        """
+        import down_sampling
+        if DSF is None: DSF = self.DSF
+        else: self.DSF = DSF
+        if not self.down_sampled:
+            down_sampling.down_sampling.down_sample(self.DSdmpath,self.dmpath,DSF)
+            self.down_sampled = True
+        else: print "Already down sampled."
+        return
+
+    def jackknife_dm(self):
+        """
+        Jackknife the down sampled dark matter particle catalog.
+        """
+        import down_sampling
+        down_sampling.down_sampling.jackknife_dm(self.outpath,
+                                                 self.DSF,self.ndivs)
+        return
+
     def compute_mass_function(self,nbins=10,do_JK=None):
         """
         Compute the halo mass function.
@@ -73,25 +96,6 @@ class encore(object):
         hhcf.compute_hhcf(self.outpath,randompath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
-    def down_sample_dm(self,DSF=None):
-        """
-        Down sample the dark matter particles by a factor of DSF,
-        which is short for "down sampling factor".
-        """
-        import down_sampling
-        if DSF is None: DSF = self.DSF
-        else: self.DSF = DSF
-        if not self.down_sampled:
-            down_sampling.down_sampling.down_sample(self.DSdmpath,self.dmpath,DSF)
-            self.down_sampled = True
-        else: print "Already down sampled."
-        return
-
-    def jackknife_dm(self):
-        import down_sampling
-        down_sampling.down_sampling.jackknife_dm(self.outpath,self.DSF,self.ndivs)
-        return
-
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
         """
         Compute the halo-matter correlation function.
@@ -101,7 +105,8 @@ class encore(object):
         """
         import hmcf
         if do_JK is None: do_JK = self.do_JK
-        hmcf.compute_hmcf(self.outpath,self.randompath,nbins,limits,edges,do_JK,self.ndivs,self.DSF,self.DSdmpath)
+        hmcf.compute_hmcf(self.outpath,self.DSdmpath,self.randompath,
+                          nbins,limits,edges,do_JK,self.ndivs,self.DSF)
         return
 
 if __name__=="__main__":
