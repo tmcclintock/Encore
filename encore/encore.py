@@ -41,13 +41,13 @@ class encore(object):
         reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(self.halopath,self.outpath,self.particle_mass,self.do_JK,self.ndivs)
         return
 
-    def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False,recreate=False):
+    def create_random_catalogs(self,edges,N,recreate=False):
         """
         Create random catalogs.
         """
         import randoms
         if not self.have_randoms or recreate:
-            randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs,do_DM)
+            randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs)
             self.have_randoms = True
         else: print "Random catalogs already created."
         return
