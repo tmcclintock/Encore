@@ -12,7 +12,6 @@ class encore(object):
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath
         self.dmpath = dmpath
-        self.randompath = randompath
         self.outpath = outpath
         self.do_JK = do_JK
         self.ndivs = ndivs
@@ -24,6 +23,13 @@ class encore(object):
             print "\tDown sampling complete."
             self.down_sampled = True
         else: self.down_sampled = False
+        if randompath is not None: self.randompath = randompath
+        else: self.randompath = self.outpath
+        if os.path.exists(self.randompath+"/randoms/"):
+            print "Random catalogs found in %s"%self.randompath
+            print "\tFor new cats: create_random_catalogs(...,recreate=True)."
+            self.have_randoms = True
+        else: self.have_randoms = False
         #Make a path for the info files
         os.system("mkdir -p %s"%outpath+"/info_files")
 
@@ -40,15 +46,10 @@ class encore(object):
         Create random catalogs.
         """
         import randoms
-        if self.randompath is not None:
-            print "Randompath specified as: %s"%self.randompath
-            if not recreate: print "Using random_catalog file found there."
-            else:
-                print "Creating randoms there."
-                randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs,do_DM)
-            return
-        else: self.randompath = self.outpath
-        randoms.create_random_catalogs.create_halo_random_catalog(self.outpath,edges,N,self.ndivs,do_DM)
+        if not self.have_randoms or recreate:
+            randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs,do_DM)
+            self.have_randoms = True
+        else: print "Random catalogs already created."
         return
 
     def compute_mass_function(self,nbins=10,do_JK=None):
