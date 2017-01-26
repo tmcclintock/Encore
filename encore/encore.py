@@ -13,11 +13,17 @@ class encore(object):
         self.halopath = halopath
         self.dmpath = dmpath
         self.randompath = randompath
-        self.DSdmpath = DSdmpath
         self.outpath = outpath
         self.do_JK = do_JK
         self.ndivs = ndivs
         self.DSF = DSF
+        if DSdmpath is not None: self.DSdmpath = DSdmpath
+        else: self.DSdmpath = self.outpath
+        if os.path.exists(self.DSdmpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF):
+            print "Down sampled DM catalog found in %s"%self.DSdmpath
+            print "\tDown sampling complete."
+            self.down_sampled = True
+        else: self.down_sampled = False
         #Make a path for the info files
         os.system("mkdir -p %s"%outpath+"/info_files")
 
@@ -63,7 +69,9 @@ class encore(object):
         """
         import hhcf
         if do_JK is None: do_JK = self.do_JK
-        hhcf.compute_hhcf(self.outpath,self.randompath,nbins,limits,edges,do_JK,self.ndivs)
+        if self.randompath is None: randompath = self.outpath
+        else: randompath = self.randompath
+        hhcf.compute_hhcf(self.outpath,randompath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
     def down_sample_dm(self,DSF=None):
@@ -74,19 +82,10 @@ class encore(object):
         import down_sampling
         if DSF is None: DSF = self.DSF
         else: self.DSF = DSF
-        if self.DSdmpath is not None:
-            if os.path.exists(self.DSdmpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF):
-                print "Down sampled DM catalog found in %s"%self.DSdmpath
-                print "\tUsing that instead.\n\tDown sampling complete."
-                return
-            else:
-                print "Down sampled DM path specified but no down sampled catalog found.\n\tCreating a down sampled catalog in %s"%outpath
-                down_sampling.down_sampling.down_sample(self.outpath,
-                                                        self.dmpath,DSF)
-                return
-        self.DSdmpath = self.outpath
-        down_sampling.down_sampling.down_sample(self.DSdmpath,
-                                                self.dmpath,DSF)
+        if not self.down_sampled:
+            down_sampling.down_sampling.down_sample(self.DSdmpath,self.dmpath,DSF)
+            self.down_sampled = True
+        else: print "Already down sampled."
         return
 
     def jackknife_dm(self):
