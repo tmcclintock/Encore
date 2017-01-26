@@ -39,9 +39,9 @@ my_encore.down_sample_dm() #Already done
 #Step 4
 #my_encore.compute_mass_function(do_JK=True)
 my_encore.create_random_catalogs(edges,N=800000) #Comment this out once it is run one time
-my_encore.compute_hhcf(edges,do_JK=False)
+#my_encore.compute_hhcf(edges,do_JK=False)
 #You can also define your own radial bins
 #Note: more bins and smaller scales means a longer run time
 limits = [0.1,50.0]
 nbins = 20
-#my_encore.compute_hmcf(edges,nbins=nbins,limits=limits,do_JK=True)
+my_encore.compute_hmcf(edges,nbins=nbins,limits=limits,do_JK=False)

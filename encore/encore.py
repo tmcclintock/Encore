@@ -9,10 +9,10 @@ class encore(object):
     def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
                  randompath=None,DSdmpath=None,outpath="./",
                  particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
+        self.outpath = outpath
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath
         self.dmpath = dmpath
-        self.outpath = outpath
         self.do_JK = do_JK
         self.ndivs = ndivs
         self.DSF = DSF
@@ -31,7 +31,7 @@ class encore(object):
             self.have_randoms = True
         else: self.have_randoms = False
         #Make a path for the info files
-        os.system("mkdir -p %s"%outpath+"/info_files")
+        os.system("mkdir -p %s"%outpath+"/info_files/")
 
     def reduce_halo_catalogs(self):
         """
@@ -70,8 +70,6 @@ class encore(object):
         """
         import hhcf
         if do_JK is None: do_JK = self.do_JK
-        if self.randompath is None: randompath = self.outpath
-        else: randompath = self.randompath
         hhcf.compute_hhcf(self.outpath,randompath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
@@ -103,7 +101,7 @@ class encore(object):
         """
         import hmcf
         if do_JK is None: do_JK = self.do_JK
-        hmcf.compute_hmcf(self.outpath,nbins,limits,edges,do_JK,self.ndivs,self.DSF,self.DSdmpath)
+        hmcf.compute_hmcf(self.outpath,self.randompath,nbins,limits,edges,do_JK,self.ndivs,self.DSF,self.DSdmpath)
         return
 
 if __name__=="__main__":
