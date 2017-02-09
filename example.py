@@ -29,20 +29,20 @@ edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
 #Step 2
 DSdmpath = "./output/"
 randompath = DSdmpath
-reducedhalopath = DSdmpath
+reducedhalopath = "../"
 my_encore = encore.encore(outpath="./output/",randompath=randompath,
                           DSdmpath=DSdmpath,reducedhalopath=reducedhalopath,
                           particle_mass=particle_mass,do_JK=True)
 
 #Step 3
-#my_encore.reduce_halo_catalogs(recreate=True) #Already done
+my_encore.reduce_halo_catalogs() #Already done
 #my_encore.down_sample_dm() #Already done
 #my_encore.jackknife_dm()
 
 #Step 4
 #my_encore.compute_mass_function(do_JK=True)
 #my_encore.create_random_catalogs(edges,N=800000) #Comment this out once it is run one time
-#my_encore.compute_hhcf(edges,do_JK=False)
+my_encore.compute_hhcf(edges,do_JK=False)
 #You can also define your own radial bins
 #Note: more bins and smaller scales means a longer run time
 limits = [0.1,50.0]
