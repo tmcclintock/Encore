@@ -59,22 +59,22 @@ def compute_hhcf(outpath,halopath,randompath,nbins,limits,edges,do_JK,ndivs):
     if do_JK: print "\t\tN_randoms JK   = %d"%len(randomsjk)
 
     #Step 3: calculate the full HH correlation function
-    calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms)
+    calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms)
 
     #Step 4: calculate the HH correlation function within JK subregions
     if do_JK:
         import compute_hhcf_jk
-        compute_hhcf_jk.calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randomsjk,ndivs)
+        compute_hhcf_jk.calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,randomsjk,ndivs)
 
     print "Halo-halo correlation function complete."
     return
 
-def calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms):
+def calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms):
     """
     Calculate the halo-halo correlation function
     for the full volume.
     """
-    redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    redpath = halopath+"/reduced_halo_cats/reduced_halo_cat.txt"
     infile = open(redpath,"r")
     halos = np.zeros((int(Nh),3))
     i = 0

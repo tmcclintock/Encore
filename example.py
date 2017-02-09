@@ -42,7 +42,7 @@ my_encore.reduce_halo_catalogs() #Already done
 #Step 4
 #my_encore.compute_mass_function(do_JK=True)
 #my_encore.create_random_catalogs(edges,N=800000) #Comment this out once it is run one time
-my_encore.compute_hhcf(edges,do_JK=False)
+my_encore.compute_hhcf(edges,do_JK=True)
 #You can also define your own radial bins
 #Note: more bins and smaller scales means a longer run time
 limits = [0.1,50.0]
