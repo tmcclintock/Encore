@@ -104,7 +104,7 @@ class encore(object):
         """
         import hhcf
         if do_JK is None: do_JK = self.do_JK
-        hhcf.compute_hhcf(self.outpath,randompath,nbins,limits,edges,do_JK,self.ndivs)
+        hhcf.compute_hhcf(self.outpath,self.randompath,nbins,limits,edges,do_JK,self.ndivs)
         return
 
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
