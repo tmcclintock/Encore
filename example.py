@@ -29,7 +29,7 @@ edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
 #Step 2
 DSdmpath = "./output/"
 randompath = DSdmpath
-reducedhalopath = "../"
+reducedhalopath = "../encore_scratch/"
 my_encore = encore.encore(outpath="./output/",randompath=randompath,
                           DSdmpath=DSdmpath,reducedhalopath=reducedhalopath,
                           particle_mass=particle_mass,do_JK=True)
