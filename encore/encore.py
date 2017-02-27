@@ -6,9 +6,28 @@ There is a unit test at the bottom of this file.
 import os
 
 class encore(object):
+    """The encore class. Used to analyze rockstar halo catalogs along with accompanying dark matter particle catalogs.
+    
+    """
+
     def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
                  randompath=None,DSdmpath=None,reducedhalopath=None,
                  outpath="./",particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
+        """Create the encore object.
+
+        Args:
+            halopath (string; optional): TODO
+            dmpath (string; optional): TODO
+            randompath (string; optional): TODO
+            DSdmpath (string; optional): TODO
+            reducedhalopath (string; optional): TODO
+            outpath (string; optional): TODO
+            particle_mass (float; optional): TODO
+            do_JK (boolean; optional): TODO
+            ndivs (int; optional): TODO
+            DSF (int; optional): TODO
+
+        """
         self.outpath = outpath #Path to the output
         self.particle_mass = particle_mass #Msun/h
         self.halopath = halopath #Unreduced halos
