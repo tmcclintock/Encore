@@ -19,7 +19,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
+def calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,randoms,ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
 
@@ -37,7 +37,7 @@ def calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randoms,ndivs):
     Njk = int(ndivs**3)
 
     #Read in all halos
-    all_halos = read_halos(outpath,Njk)
+    all_halos = read_halos(halopath,Njk)
 
     #Treecorr interface
     config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
@@ -240,7 +240,7 @@ def calculate_autos(config,all_halos,randoms,step,ndivs,Njk):
     print "\t\tHHCF DD and DR autocorrelations computed."
     return DDa_all,DRa_all
 
-def read_halos(outpath,Njk):
+def read_halos(halopath,Njk):
     """
     Read in halos from the jackknife files.
     Returns an array of Njk X N_halos_i X 3 where
@@ -248,7 +248,7 @@ def read_halos(outpath,Njk):
     This is not a constant number.
     """
     all_halos = []
-    jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
+    jkpath = halopath+"/JK_halo_cats/jk_halo_cat_%d.txt"
     for index in range(Njk):
         infile = open(jkpath%index,"r")
         halos = [] #Will be Nhjk X 3

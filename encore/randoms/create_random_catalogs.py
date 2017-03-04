@@ -5,7 +5,7 @@ import os,sys
 try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 
-def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
+def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     """
     Create random catalogs for the full region
     and a JK subregion.
@@ -40,20 +40,19 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs,do_DM):
     posjk = np.array([xjk,yjk,zjk]).T
     np.savetxt(outpath+"/randoms/jk_halo_random.txt",posjk)
 
-    if do_DM:
-        print "\t\tN_DM_randoms full   = %d"%Nrdm
-        print "\t\tN_DM_randoms/JK     = %d"%Nrjkdm
-        x = np.random.rand(Nrdm)*width
-        y = np.random.rand(Nrdm)*width
-        z = np.random.rand(Nrdm)*width
-        pos = np.array([x,y,z]).T
-        np.savetxt(outpath+"/randoms/full_dm_random.txt",pos)
+    print "\t\tN_DM_randoms full   = %d"%Nrdm
+    print "\t\tN_DM_randoms/JK     = %d"%Nrjkdm
+    x = np.random.rand(Nrdm)*width
+    y = np.random.rand(Nrdm)*width
+    z = np.random.rand(Nrdm)*width
+    pos = np.array([x,y,z]).T
+    np.savetxt(outpath+"/randoms/full_dm_random.txt",pos)
 
-        xjk = np.random.rand(Nrjkdm)*widthjk
-        yjk = np.random.rand(Nrjkdm)*widthjk
-        zjk = np.random.rand(Nrjkdm)*widthjk
-        posjk = np.array([xjk,yjk,zjk]).T
-        np.savetxt(outpath+"/randoms/jk_dm_random.txt",posjk)
+    xjk = np.random.rand(Nrjkdm)*widthjk
+    yjk = np.random.rand(Nrjkdm)*widthjk
+    zjk = np.random.rand(Nrjkdm)*widthjk
+    posjk = np.array([xjk,yjk,zjk]).T
+    np.savetxt(outpath+"/randoms/jk_dm_random.txt",posjk)
 
     print "\tRandom catalogs created."
     return

@@ -16,6 +16,9 @@ except ImportError: raise Exception("Must install pygadgetreader.")
 
 
 def down_sample(outpath,dmpath,DSF):
+    #Create the directories to put the down-sampling output
+    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
+
     print "Down sampling on file: %s"%dmpath
     print "\tDSF = %d"%DSF
 

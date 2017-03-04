@@ -1,7 +1,7 @@
 """
 Reduce the halo catalog.
 """
-import os
+import os, sys
 import numpy as np
 
 #Pull out the indices
@@ -59,6 +59,7 @@ def jackknife_halo_catalog(outpath,ndivs):
         limits = np.loadtxt(outpath+"/info_files/spatial_limits.txt")
     else:
         limits = find_spatial_limits(outpath)
+        os.system("mkdir -p %s"%(outpath+"/info_files/"))
         np.savetxt(outpath+"/info_files/spatial_limits.txt",limits)
     dx = (limits[0,1]-limits[0,0])/ndivs
     dy = (limits[1,1]-limits[1,0])/ndivs

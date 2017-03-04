@@ -20,7 +20,8 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF,DSdmpath):
+def compute_hmcf(outpath,DSdmpath,randompath,
+                 nbins,limits,edges,do_JK,ndivs,DSF):
     """
     Compute the halo-matter correlation function.
 
@@ -50,13 +51,13 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF,DSdmpath):
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
-    halorandpath = outpath+"/randoms/full_halo_random.txt"
-    dmrandpath   = outpath+"/randoms/full_dm_random.txt"
+    halorandpath = randompath+"/randoms/full_halo_random.txt"
+    dmrandpath   = randompath+"/randoms/full_dm_random.txt"
     if os.path.exists(halorandpath) and os.path.exists(dmrandpath): 
         halorandoms = np.loadtxt(halorandpath)
         dmrandoms = np.loadtxt(dmrandpath)
     else: raise Exception("Must create random catalog first.")
-    print "\tRandom catalogs loaded.\nUsing random catalogs with:"
+    print "\tRandom catalogs loaded.\n\tUsing random catalogs with:"
     print "\t\tN_halo_randoms full = %d"%len(halorandoms)
     print "\t\tN_dm_randoms full   = %d"%len(dmrandoms)
 
@@ -65,15 +66,15 @@ def compute_hmcf(outpath,nbins,limits,edges,do_JK,ndivs,DSF,DSdmpath):
 
     #Step 4: calculate the HM correlation function within JK subregions
     if do_JK:
-        halorandpath = outpath+"/randoms/jk_halo_random.txt"
-        dmrandpath   = outpath+"/randoms/jk_dm_random.txt"
+        halorandpath = randompath+"/randoms/jk_halo_random.txt"
+        dmrandpath   = randompath+"/randoms/jk_dm_random.txt"
         if os.path.exists(halorandpath) and os.path.exists(dmrandpath): 
             halorandoms = np.loadtxt(halorandpath)
             dmrandoms = np.loadtxt(dmrandpath)
         import compute_hmcf_jk
         compute_hmcf_jk.calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,DSF)
 
-    print "Halo-matter correlation function not implemented yet!"
+    print "Halo-matter correlation function calculated."
     return
 
 def calcalate_hmcf_full(outpath,nbins,limits,Nh,halorandoms,dmrandoms,DSF):

@@ -18,7 +18,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hhcf(outpath,randompath,nbins,limits,edges,do_JK,ndivs):
+def compute_hhcf(outpath,halopath,randompath,nbins,limits,edges,do_JK,ndivs):
     """
     Compute the halo-halo correlation function.
 
@@ -39,7 +39,7 @@ def compute_hhcf(outpath,randompath,nbins,limits,edges,do_JK,ndivs):
     if os.path.exists(outpath+"/info_files/halo_mass_info.txt"):
         halo_mass_info = np.loadtxt(outpath+"/info_files/halo_mass_info.txt")
     else:
-        halo_mass_info = calculate_mean_mass(outpath,do_JK,ndivs)
+        halo_mass_info = calculate_mean_mass(halopath,do_JK,ndivs)
         np.savetxt(outpath+"/info_files/halo_mass_info.txt",halo_mass_info)
     print "\tHalo masses averaged, results:"
     print "\t\tMmean  = %e"%halo_mass_info[0]
@@ -59,22 +59,22 @@ def compute_hhcf(outpath,randompath,nbins,limits,edges,do_JK,ndivs):
     if do_JK: print "\t\tN_randoms JK   = %d"%len(randomsjk)
 
     #Step 3: calculate the full HH correlation function
-    calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms)
+    calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms)
 
     #Step 4: calculate the HH correlation function within JK subregions
     if do_JK:
         import compute_hhcf_jk
-        compute_hhcf_jk.calculate_JK_hhcf(outpath,nbins,limits,edges,Nh,randomsjk,ndivs)
+        compute_hhcf_jk.calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,randomsjk,ndivs)
 
     print "Halo-halo correlation function complete."
     return
 
-def calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms):
+def calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms):
     """
     Calculate the halo-halo correlation function
     for the full volume.
     """
-    redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    redpath = halopath+"/reduced_halo_cats/reduced_halo_cat.txt"
     infile = open(redpath,"r")
     halos = np.zeros((int(Nh),3))
     i = 0
@@ -99,7 +99,7 @@ def calcalate_hhcf_full(outpath,nbins,limits,Nh,randoms):
     print "\tFull halo-halo correlation function complete."
     return
 
-def calculate_mean_mass(outpath,do_JK,ndivs):
+def calculate_mean_mass(halopath,do_JK,ndivs):
     """
     Calculate the mean masses of the halos.
     If JK is on then calculate mean masses
@@ -107,7 +107,7 @@ def calculate_mean_mass(outpath,do_JK,ndivs):
     """
     Mtotal = 0.0
     N = 0
-    redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    redpath = halopath+"/reduced_halo_cats/reduced_halo_cat.txt"
     infile = open(redpath,"r")
     for line in infile:
         if line[0] is "#": continue
