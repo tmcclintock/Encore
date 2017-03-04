@@ -30,8 +30,15 @@ class encore(object):
         return
 
     def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False,recreate=False):
-        """
-        Create random catalogs.
+        """Create catalogs of random points in a volume specified by the user.
+
+        Args:
+            edges (array_like): Spatial edges that contain the random points. Assumes a cube.
+            N (int): Number of random points to be created in the entire volume.
+            do_JK (bool): Flag to turn on partitioning into jackknife regions; default False.
+            do_DM (bool): Flag to also create randoms for dark matter particles, in addition to halos; Default False.
+            recreate (bool): Recreate random catalogs if they are found to exist already; default False.
+
         """
         import randoms
         if self.randompath is not None:
@@ -46,8 +53,12 @@ class encore(object):
         return
 
     def compute_mass_function(self,nbins=10,do_JK=None):
-        """
-        Compute the halo mass function.
+        """Computes the halo mass function.
+
+        Args:
+            nbins (int): Number of mass bins to put halos in; default is 10.
+            do_JK (bool): Flag to turn on partitioning into jackknife regions; default uses the value passed at initialization.
+        
         """
         import mass_function
         if do_JK is None: do_JK = self.do_JK
@@ -55,11 +66,14 @@ class encore(object):
         return
 
     def compute_hhcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
-        """
-        Compute the halo-halo correlation function.
+        """Compute the halo-halo correlation function.
         
-        The only required input is the spatial edges
-        of the snapshot (e.g. 0 to 1000 Mpc/h).
+        Args:
+            edges (array_like): Spatial edges that contain the random points. Assumes a cube.
+            nbins (int): Number of mass bins to put halos in; default is 10.
+            limits (double): Radial limits of the bins of the correlation function; default is [1.0,50.0].
+            do_JK (bool): Flag to turn on partitioning into jackknife regions; default uses the value passed at initialization.
+        
         """
         import hhcf
         if do_JK is None: do_JK = self.do_JK
@@ -67,9 +81,11 @@ class encore(object):
         return
 
     def down_sample_dm(self,DSF=None):
-        """
-        Down sample the dark matter particles by a factor of DSF,
-        which is short for "down sampling factor".
+        """Down sample the dark matter particles by a factor of DSF, which is short for "down sampling factor".
+
+        Args:
+            DSF (int): Factor by which the dark matter catalog is reduced by. E.g. 10 means only one out of ten particles is kept; default uses the value passed at initialization.
+
         """
         import down_sampling
         if DSF is None: DSF = self.DSF
@@ -90,16 +106,22 @@ class encore(object):
         return
 
     def jackknife_dm(self):
+        """Jackknife the dark matter particles.
+
+        """
         import down_sampling
         down_sampling.down_sampling.jackknife_dm(self.outpath,self.DSF,self.ndivs)
         return
 
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
-        """
-        Compute the halo-matter correlation function.
+        """Compute the halo-matter correlation function.
         
-        The only required input is the spatial edges
-        of the snapshot (e.g. 0 to 1000 Mpc/h).
+        Args:
+            edges (array_like): Spatial edges that contain the random points. Assumes a cube.
+            nbins (int): Number of mass bins to put halos in; default is 10.
+            limits (double): Radial limits of the bins of the correlation function; default is [1.0,50.0].
+            do_JK (bool): Flag to turn on partitioning into jackknife regions; default uses the value passed at initialization.
+
         """
         import hmcf
         if do_JK is None: do_JK = self.do_JK
