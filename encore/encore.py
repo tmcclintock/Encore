@@ -23,7 +23,7 @@ class encore(object):
             reducedhalopath (string; optional): TODO
             outpath (string; optional): Path for all output files; default is ./.
             particle_mass (float; optional): Mass of dark matter particles; default is 3e10 Msun/h; note that units are arbitrary.
-            do_JK (boolean; optional): TODO
+            do_JK (boolean; optional): Compute jackknifes for all quantities, including jackknifing the DM and halo catalogs; default is False.
             ndivs (int; optional): TODO
             DSF (int; optional): TODO
 
