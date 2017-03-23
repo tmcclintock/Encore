@@ -30,7 +30,7 @@ def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs,recreate):
 
     print "Reducing halo catalog."
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
-    if os.path.exists(redpath): print "Reduced halo catalog already exists."
+    if os.path.exists(redpath) and not recreate: print "Reduced halo catalog already exists."
     else: 
         outfile = open(redpath,"w")
         with open(halopath) as infile:

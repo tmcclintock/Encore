@@ -78,6 +78,10 @@ class encore(object):
     def reduce_halo_catalogs(self,recreate=False):
         """
         Reduce the halo catalog.
+
+        Args:
+            recreate (bool): Flag to re-reduce the rockstar catalog, even if it's already reduced; default False.
+
         """
         import reduce_catalogs
         cat = getattr(self,"catalog")
@@ -85,7 +89,7 @@ class encore(object):
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
-            except AttributeError
+            except AttributeError: pass
         reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(cat,args['outpath'],args['particle_mass'],args['do_JK'],args['ndivs'],recreate)
         return
 
@@ -132,22 +136,18 @@ class encore(object):
                                                  self.DSF,self.ndivs)
         return
 
-    def compute_mass_function(self,n_jk_divs=2):
+    def compute_mass_function(self):
         """Computes the halo mass function.
-
-        Args:
-            nbins (int): Number of mass bins to put halos in; default is 10.
-            do_JK (bool): Flag to turn on partitioning into jackknife regions; default uses the value passed at initialization.
         
         """
         import mass_function
         cat = getattr(self,"catalog")
-        args = {"outpath":"./", "nbins":10, "do_JK":False, "ndivs":2}
+        args = {"outpath":"./", "jkcatalog":None, "nbins":10, "do_JK":False, "ndivs":2}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
-            except AttributeError
-        mass_function.compute_mass_function(cat,args['outpath'],args['nbins'],args['do_JK'],args['ndivs'])
+            except AttributeError: pass
+        mass_function.compute_mass_function(cat,args['outpath'],args['jkcatalog'],args['nbins'],args['do_JK'],args['ndivs'])
         return
 
     def compute_hhcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):

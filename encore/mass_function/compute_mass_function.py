@@ -15,30 +15,28 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_mass_function(halopath,outpath,nbins,do_JK,ndivs):
+def compute_mass_function(catalog,outpath,jkcatalog,nbins,do_JK,ndivs):
     print "Computing mass function."
 
     #Step 0: create the paths
     create_mass_function_directories(outpath)
 
     #Step 1: figure out the Min/Max masses
-    limits = find_mass_limits(outpath)
+    limits = find_mass_limits(catalog)
     print "\tUsing M_min = %.2e and M_max = %.2e"%(limits[0],limits[1])
 
     #Step 2: calcalate the full mass function
-    calculate_full_mass_function(outpath,limits,nbins)
+    calculate_full_mass_function(catalog, outpath, limits, nbins)
 
     #Step 3: do JK calculation
-    if do_JK:
-        calculate_JK_mass_function(outpath,limits,nbins,ndivs)
+    if do_JK: calculate_JK_mass_function(jkcatalog, outpath, limits, nbins, ndivs)
     
     print "\tMass function successfully computed."
     return
 
-def find_mass_limits(outpath):
+def find_mass_limits(catalog):
     mmin, mmax = 1e999, 0.0
-    redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
-    infile = open(redpath,"r")
+    infile = open(catalog,"r")
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
@@ -48,43 +46,39 @@ def find_mass_limits(outpath):
     infile.close()
     return np.array([mmin,mmax])
 
-def calculate_full_mass_function(outpath,limits,nbins):
+def calculate_full_mass_function(catalog, outpath, limits, nbins):
     print "\tFinding full mass function."
-    redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
     fullpath = outpath+"/mass_function/full_N/full_N.txt"
     N = np.zeros((nbins)) #Holds the mass function
     mmin,mmax = limits
     lmmin,lmmax = np.log(limits)
-    edges = np.exp(np.linspace(lmmin,lmmax,nbins+1))
-    bins = np.array([edges[:-1],edges[1:]]).T
-    infile = open(redpath,"r")
+    edges = np.exp(np.linspace(lmmin ,lmmax, nbins+1))
+    bins = np.array([edges[:-1], edges[1:]]).T
+    infile = open(catalog, "r")
     for line in infile:
         if line[0] is "#": continue
         parts = line.split()
         m = float(parts[m_index])
-        for b,i in zip(bins,range(len(bins))):
+        for b,i in zip(bins, range(len(bins))):
             if m >= b[0] and m < b[1]: 
                 N[i]+=1
                 break
             else: continue #Halo not in any bins
-    outfile = open(fullpath,"w")
+    outfile = open(fullpath, "w")
     outfile.write("#Bin_left\tBin_right\tN_halos\n")
     for i in range(len(bins)):
-        outfile.write("%.4e\t%.4e\t%d\n"%(bins[i,0],bins[i,1],N[i]))
+        outfile.write("%.4e\t%.4e\t%d\n"%(bins[i,0], bins[i,1], N[i]))
     outfile.close()
     return
 
-def calculate_JK_mass_function(outpath,limits,nbins,ndivs):
+def calculate_JK_mass_function(jkcatalog, outpath, limits, nbins, ndivs):
     print "\tFinding JK mass function."
-    #First create singles
-    calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs)
-    #Now recombine
+    calculate_JK_mass_function_singles(jkcatalog, outpath, limits, nbins, ndivs)
     N = combine_JK_mass_function(outpath,nbins,ndivs)
-    #Now make final data and covariances
     make_data_and_cov(outpath,nbins,ndivs,N)
     return
 
-def make_data_and_cov(outpath,nbins,ndivs,N):
+def make_data_and_cov(outpath ,nbins, ndivs, N):
     """
     Make the final data and the covariance matrix.
     """
@@ -113,7 +107,7 @@ def make_data_and_cov(outpath,nbins,ndivs,N):
     print "\tFinal mass function JK data and covariance matrix created."
     return
 
-def combine_JK_mass_function(outpath,nbins,ndivs):
+def combine_JK_mass_function(outpath, nbins, ndivs):
     """
     Combine the JKs.
     """
@@ -138,7 +132,7 @@ def combine_JK_mass_function(outpath,nbins,ndivs):
     print "\tSuccessfully combined JK N(M) files."
     return N
 
-def calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs):
+def calculate_JK_mass_function_singles(jkcatalog, outpath, limits, nbins, ndivs):
     """
     Get N(M) for individual JK regions.
     """
@@ -152,10 +146,8 @@ def calculate_JK_mass_function_singles(outpath,limits,nbins,ndivs):
     for i in range(Njks): 
         outfile = open(jkoutbase%i,"w")
         outfile.write("#Bin_left\tBin_right\tN_halos\n")
-    
         N = np.zeros((nbins)) #Holds the mass function
-        jkredpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"%i
-        infile = open(jkredpath,"r")
+        infile = open(jkcatalog%i,"r")
         for line in infile:
             if line[0] is "#": continue
             parts = line.split()
