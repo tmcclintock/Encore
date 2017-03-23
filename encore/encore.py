@@ -81,7 +81,6 @@ class encore(object):
 
         Args:
             recreate (bool): Flag to re-reduce the rockstar catalog, even if it's already reduced; default False.
-
         """
         import reduce_catalogs
         cat = getattr(self,"catalog")
@@ -129,7 +128,6 @@ class encore(object):
 
     def jackknife_dm(self):
         """Jackknife the down sampled dark matter particle catalog.
-
         """
         import down_sampling
         down_sampling.down_sampling.jackknife_dm(self.DSdmpath,
@@ -138,7 +136,6 @@ class encore(object):
 
     def compute_mass_function(self):
         """Computes the halo mass function.
-        
         """
         import mass_function
         cat = getattr(self,"catalog")
