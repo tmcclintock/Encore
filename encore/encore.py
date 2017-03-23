@@ -52,7 +52,7 @@ class encore(object):
         if reducedhalopath is not None: self.reducedhalopath = reducedhalopath
         else: self.reducedhalopath = self.outpath
         if os.path.exists(self.reducedhalopath+"/reduced_halo_cats/reduced_halo_cat.txt"):
-            print "Reduced halo catalog found in %s"%self.reducedhalopath
+            print "Reduced halo catalog found at %s"%self.reducedhalopath
             print "\tFor new cats: reduce_halo_catalogs(...,recreate=True)."
             self.have_reducedhalos = True
         else: self.have_reducedhalos = False
