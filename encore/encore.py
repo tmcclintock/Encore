@@ -10,7 +10,7 @@ class encore(object):
     
     """
 
-    def __init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
+    def OLD__init__(self,halopath='NOT INITIALIZED',dmpath="NOT INITIALIZED",
                  randompath=None,DSdmpath=None,reducedhalopath=None,
                  outpath="./",particle_mass=3e10,do_JK=False,ndivs=2,DSF=1000):
         """Create the encore object.
@@ -59,15 +59,34 @@ class encore(object):
         #Make a path for the info files
         os.system("mkdir -p %s"%outpath+"/info_files/")
 
+    def __init__(self,**kwargs):
+        """Create a rockstar object.
+
+        Note: if not set, the output path is set to './'.
+
+        """
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        if not hasattr(self,"outpath"): self.outpath = "./"
+
+    def __str__(self):
+        outstr = "Rockstar encore with:"
+        for name in self.__dict__:
+            outstr += "\n\t%s: %s"%(name,getattr(self,name))
+        return outstr
+
     def reduce_halo_catalogs(self,recreate=False):
         """
         Reduce the halo catalog.
         """
         import reduce_catalogs
-        if not self.have_reducedhalos or recreate:
-            reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(self.halopath,self.reducedhalopath,self.particle_mass,self.do_JK,self.ndivs)
-            self.have_reducedhalos = True
-        else: print "Halos already reduced."
+        cat = getattr(self,"catalog")
+        args = {"outpath":"./", "particle_mass":None, "do_JK":False, "ndivs":2}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError
+        reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(cat,args['outpath'],args['particle_mass'],args['do_JK'],args['ndivs'],recreate)
         return
 
     def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False,recreate=False):
@@ -113,7 +132,7 @@ class encore(object):
                                                  self.DSF,self.ndivs)
         return
 
-    def compute_mass_function(self,nbins=10,do_JK=None):
+    def compute_mass_function(self,n_jk_divs=2):
         """Computes the halo mass function.
 
         Args:
@@ -122,8 +141,13 @@ class encore(object):
         
         """
         import mass_function
-        if do_JK is None: do_JK = self.do_JK
-        mass_function.compute_mass_function(self.outpath,nbins,do_JK,self.ndivs)
+        cat = getattr(self,"catalog")
+        args = {"outpath":"./", "nbins":10, "do_JK":False, "ndivs":2}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError
+        mass_function.compute_mass_function(cat,args['outpath'],args['nbins'],args['do_JK'],args['ndivs'])
         return
 
     def compute_hhcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
@@ -158,12 +182,5 @@ class encore(object):
         return
 
 if __name__=="__main__":
-    particle_mass = 3.98769e10 #Msun/h
-    my_encore = encore(outpath="../output/",particle_mass=particle_mass,do_JK=True)
-    my_encore.reduce_halo_catalogs()
-    my_encore.compute_mass_function(do_JK=True)
-    edges = [0.0,1050.0] #Mpc/h; spatial edges of the snapshot
-    my_encore.create_random_catalogs(edges,N=100000,do_DM=True)
-    my_encore.compute_hhcf(edges,do_JK=True)
-    my_encore.compute_hmcf(edges,do_JK=True)
-    print "Unit test complete"
+    my_encore = encore(outpath="../output/",particle_mass=3e10,do_JK=True)
+    print my_encore

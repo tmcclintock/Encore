@@ -20,7 +20,10 @@ else:
     n_index = None
     print "\tWARNING: Particle number index missing."
 
-def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs):
+def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs,recreate):
+    if n_index is None and pmass is None:
+        raise Exception("Either the rockstar catalog must have Np or you must specify particle_mass.")
+
     #Create halo catalog directories
     os.system("mkdir -p %s"%outpath+"/reduced_halo_cats")
     os.system("mkdir -p %s"%outpath+"/JK_halo_cats")

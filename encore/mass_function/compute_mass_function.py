@@ -15,19 +15,14 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_mass_function(outpath,nbins,do_JK,ndivs,limits=None):
+def compute_mass_function(halopath,outpath,nbins,do_JK,ndivs):
     print "Computing mass function."
 
     #Step 0: create the paths
     create_mass_function_directories(outpath)
 
     #Step 1: figure out the Min/Max masses
-    if limits is None: 
-        if os.path.exists(outpath+"/info_files/mass_limits.txt"):
-            limits = np.loadtxt(outpath+"/info_files/mass_limits.txt")
-        else: 
-            limits = find_mass_limits(outpath)
-            np.savetxt(outpath+"/info_files/mass_limits.txt",limits)
+    limits = find_mass_limits(outpath)
     print "\tUsing M_min = %.2e and M_max = %.2e"%(limits[0],limits[1])
 
     #Step 2: calcalate the full mass function
