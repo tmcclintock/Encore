@@ -18,6 +18,13 @@ class encore(object):
             outstr += "\n\t%s: %s"%(name,getattr(self,name))
         return outstr
 
+    def set(self,**kwargs):
+        """Set new attributes or replace old ones.
+        """
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        return
+
     def reduce_halo_catalogs(self,recreate=False):
         """
         Reduce the halo catalog by removing halos that are too small (<200 particles).
