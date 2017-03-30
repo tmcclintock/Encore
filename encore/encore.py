@@ -29,17 +29,20 @@ class encore(object):
         """
         Reduce the halo catalog by removing halos that are too small (<200 particles).
 
+        Note: This assumes that the snapshot is a cubic region.
+
         Args:
             recreate (bool): Flag to re-reduce the rockstar catalog, even if it's already reduced; default False.
         """
         import reduce_catalogs
         cat = getattr(self,"catalog")
+        edges = getattr(self,"edges")
         args = {"outpath":"./", "particle_mass":None, "do_JK":False, "ndivs":2}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
             except AttributeError: pass
-        reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(cat, args['outpath'], args['particle_mass'], args['do_JK'], args['ndivs'], recreate)
+        reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(cat, args['outpath'], edges, args['particle_mass'], args['do_JK'], args['ndivs'], recreate)
         return
 
     def create_random_catalogs(self):

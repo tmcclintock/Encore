@@ -20,7 +20,7 @@ else:
     n_index = None
     print "\tWARNING: Particle number index missing."
 
-def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs,recreate):
+def reduce_halo_catalog(halopath, outpath, edges, pmass, do_JK, ndivs, recreate):
     if n_index is None and pmass is None:
         raise Exception("Either the rockstar catalog must have Np or you must specify particle_mass.")
 
@@ -52,12 +52,14 @@ def reduce_halo_catalog(halopath,outpath,pmass,do_JK,ndivs,recreate):
                     Np = int(M/pmass+0.01) #extra added for rounding
                     if Np >= 200:outfile.write(line)
         outfile.close()
-    if do_JK: jackknife_halo_catalog(outpath,ndivs)
+    if do_JK: jackknife_halo_catalog(outpath, edges, ndivs)
     print "\tHalo catalogs reduced."
     return
 
-def jackknife_halo_catalog(outpath,ndivs):
+def jackknife_halo_catalog(outpath, edges, ndivs):
     print "\tJackknifing halo catalog."
+    """
+    #Legacy code
     if os.path.exists(outpath+"/info_files/spatial_limits.txt"):
         limits = np.loadtxt(outpath+"/info_files/spatial_limits.txt")
     else:
@@ -67,6 +69,8 @@ def jackknife_halo_catalog(outpath,ndivs):
     dx = (limits[0,1]-limits[0,0])/ndivs
     dy = (limits[1,1]-limits[1,0])/ndivs
     dz = (limits[2,1]-limits[2,0])/ndivs
+    """
+    dx = dy = dz = (edges[1] - edges[0])/ndivs
 
     redpath = outpath+"/reduced_halo_cats/reduced_halo_cat.txt"
     jkoutbase = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
@@ -92,6 +96,10 @@ def jackknife_halo_catalog(outpath,ndivs):
     return
 
 def find_spatial_limits(outpath):
+    """Finds the spatial limits in each direction of the snapshot.
+    Note: this function is legacy and isn't used anymore, since I now
+    always assume that the snapshot is a cube.
+    """
     print "\tFinding spatial limits."
     xmin,xmax = 1e99,-1e99
     ymin,ymax = zmin,zmax = xmin,xmax
