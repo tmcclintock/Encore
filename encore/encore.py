@@ -32,25 +32,21 @@ class encore(object):
             try:
                 args[key] = getattr(self,key)
             except AttributeError: pass
-        reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(cat,args['outpath'],args['particle_mass'],args['do_JK'],args['ndivs'],recreate)
+        reduce_catalogs.reduce_halo_catalogs.reduce_halo_catalog(cat, args['outpath'], args['particle_mass'], args['do_JK'], args['ndivs'], recreate)
         return
 
-    def create_random_catalogs(self,edges,N,do_JK=False,do_DM=False,recreate=False):
+    def create_random_catalogs(self):
         """Create catalogs of random points in a volume specified by the user.
-
-        Args:
-            edges (array_like): Spatial edges that contain the random points. Assumes a cube.
-            N (int): Number of random points to be created in the entire volume.
-            do_JK (bool): Flag to turn on partitioning into jackknife regions; default False.
-            do_DM (bool): Flag to also create randoms for dark matter particles, in addition to halos; Default False.
-            recreate (bool): Recreate random catalogs if they are found to exist already; default False.
-
         """
         import randoms
-        if not self.have_randoms or recreate:
-            randoms.create_random_catalogs.create_halo_random_catalog(self.randompath,edges,N,self.ndivs)
-            self.have_randoms = True
-        else: print "Random catalogs already created."
+        edges = getattr(self,"edges")
+        N_randoms = getattr(self,"N_randoms")
+        args = {"outpath":"./", "ndivs":2}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError: pass
+        randoms.create_random_catalogs.create_halo_random_catalog(args['outpath'], N_randoms, edges, args['ndivs'])
         return
 
     def down_sample_dm(self,DSF=None):

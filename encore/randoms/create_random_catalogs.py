@@ -5,7 +5,7 @@ import os,sys
 try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 
-def create_halo_random_catalog(outpath,edges,Nh,ndivs):
+def create_halo_random_catalog(outpath, N_randoms, edges, ndivs):
     """
     Create random catalogs for the full region
     and a JK subregion.
@@ -17,11 +17,12 @@ def create_halo_random_catalog(outpath,edges,Nh,ndivs):
     print "\tRandom directories created."
 
     M = 1 #Multiplicative factor
-    Nr = int(M*Nh) #Randoms number
+    Nr = int(M*N_randoms) #Number of randoms
     Njk = ndivs**3
-    Nrjk = int(Nr/Njk)
-    Nrdm = int(Nr*1) #Arbitrary amount
-    Nrjkdm = int(Nrdm/Njk)
+    Nrjk = int(Nr/Njk) #Number of randoms per JK
+    M_dm = 1
+    Nrdm = int(Nr*M_dm) #Number of DM randoms
+    Nrjkdm = int(Nrdm/Njk) #Number of DM randoms per JK
     print "\tCreating random catalogs with:"
     print "\t\tN_halo_randoms full = %d"%Nr
     print "\t\tN_halo_randoms/JK   = %d"%Nrjk
