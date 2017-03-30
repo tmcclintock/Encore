@@ -150,7 +150,6 @@ def calculate_JK_mass_function_singles(jkcatalog, outpath, limits, nbins, ndivs)
         outfile = open(jkoutbase%i,"w")
         outfile.write("#Bin_left\tBin_right\tN_halos\n")
         N = np.zeros((nbins)) #Holds the mass function
-        print jkcatalog%i
         infile = open(jkcatalog%i,"r")
         for line in infile:
             if line[0] is "#": continue
