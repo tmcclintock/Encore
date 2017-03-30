@@ -84,6 +84,7 @@ class encore(object):
         """Computes the halo mass function.
 
         Note: jkcatalog must be a formatted string that takes a single integer representing which jackknife region it is.
+        E.g.: jk_halo_catalog%d.txt
         """
         import mass_function
         cat = getattr(self,"catalog")
