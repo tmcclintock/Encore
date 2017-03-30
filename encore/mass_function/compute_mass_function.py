@@ -29,6 +29,8 @@ def compute_mass_function(catalog,outpath,jkcatalog,nbins,do_JK,ndivs):
     calculate_full_mass_function(catalog, outpath, limits, nbins)
 
     #Step 3: do JK calculation
+    if do_JK and jkcatalog is None: 
+        raise Exception("Cannot jackknife the mass function without a jkcatalog. Please see the docstring for encore.compute_mass_function().")
     if do_JK: calculate_JK_mass_function(jkcatalog, outpath, limits, nbins, ndivs)
     
     print "\tMass function successfully computed."
