@@ -248,7 +248,7 @@ def read_halos(halopath,Njk):
     This is not a constant number.
     """
     all_halos = []
-    jkpath = halopath+"/JK_halo_cats/jk_halo_cat_%d.txt"
+    jkpath = halopath
     for index in range(Njk):
         infile = open(jkpath%index,"r")
         halos = [] #Will be Nhjk X 3

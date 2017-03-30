@@ -96,19 +96,19 @@ class encore(object):
         mass_function.compute_mass_function(cat,args['outpath'],args['jkcatalog'],args['nbins'],args['do_JK'],args['ndivs'])
         return
 
-    def compute_hhcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
+    def compute_hhcf(self):
         """Compute the halo-halo correlation function.
-        
-        Args:
-            edges (array_like): Spatial edges that contain the random points. Assumes a cube.
-            nbins (int): Number of mass bins to put halos in; default is 10.
-            limits (double): Radial limits of the bins of the correlation function; default is [1.0,50.0].
-            do_JK (bool): Flag to turn on partitioning into jackknife regions; default uses the value passed at initialization.
-        
         """
         import hhcf
-        if do_JK is None: do_JK = self.do_JK
-        hhcf.compute_hhcf(self.outpath,self.reducedhalopath,self.randompath,nbins,limits,edges,do_JK,self.ndivs)
+        cat = getattr(self,"catalog")
+        rands = getattr(self,"randoms")
+        edges = getattr(self,"edges")
+        args = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkrands":None, "ndivs":2}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError: pass
+        hhcf.compute_hhcf(args['outpath'], cat, rands, args['jkcatalog'], args['jkrands'], args['nbins'], args['Rlimits'], edges, args['do_JK'], args['ndivs'])
         return
 
     def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):

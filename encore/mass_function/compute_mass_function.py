@@ -26,11 +26,12 @@ def compute_mass_function(catalog,outpath,jkcatalog,nbins,do_JK,ndivs):
     print "\tUsing M_min = %.2e and M_max = %.2e"%(limits[0],limits[1])
 
     #Step 2: calcalate the full mass function
-    calculate_full_mass_function(catalog, outpath, limits, nbins)
+    #calculate_full_mass_function(catalog, outpath, limits, nbins)
 
     #Step 3: do JK calculation
     if do_JK and jkcatalog is None: 
         raise Exception("Cannot jackknife the mass function without a jkcatalog. Please see the docstring for encore.compute_mass_function().")
+    print jkcatalog, outpath, limits,nbins,ndivs
     if do_JK: calculate_JK_mass_function(jkcatalog, outpath, limits, nbins, ndivs)
     
     print "\tMass function successfully computed."
@@ -149,11 +150,12 @@ def calculate_JK_mass_function_singles(jkcatalog, outpath, limits, nbins, ndivs)
         outfile = open(jkoutbase%i,"w")
         outfile.write("#Bin_left\tBin_right\tN_halos\n")
         N = np.zeros((nbins)) #Holds the mass function
+        print jkcatalog%i
         infile = open(jkcatalog%i,"r")
         for line in infile:
             if line[0] is "#": continue
             parts = line.split()
-            m = float(parts[2])
+            m = float(parts[m_index])
             for b,j in zip(bins,range(len(bins))):
                 if m >= b[0] and m < b[1]: 
                     N[j]+=1

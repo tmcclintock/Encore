@@ -18,7 +18,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hhcf(outpath,halopath,randompath,nbins,limits,edges,do_JK,ndivs):
+def compute_hhcf(outpath, halopath, randpath, jkhalopath, jkrandpath, nbins, limits, edges, do_JK, ndivs):
     """
     Compute the halo-halo correlation function.
 
@@ -48,8 +48,6 @@ def compute_hhcf(outpath,halopath,randompath,nbins,limits,edges,do_JK,ndivs):
     Mmean,Mtotal,Nh = halo_mass_info
 
     #Step 2: get random catalogs.
-    randpath = randompath+"/randoms/full_halo_random.txt"
-    jkrandpath = randompath+"/randoms/jk_halo_random.txt"
     if os.path.exists(randpath): randoms = np.loadtxt(randpath)
     else: raise Exception("Must create random catalog first.")
     if do_JK: randomsjk = np.loadtxt(jkrandpath)
@@ -64,7 +62,7 @@ def compute_hhcf(outpath,halopath,randompath,nbins,limits,edges,do_JK,ndivs):
     #Step 4: calculate the HH correlation function within JK subregions
     if do_JK:
         import compute_hhcf_jk
-        compute_hhcf_jk.calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,randomsjk,ndivs)
+        compute_hhcf_jk.calculate_JK_hhcf(outpath,jkhalopath,nbins,limits,edges,Nh,randomsjk,ndivs)
 
     print "Halo-halo correlation function complete."
     return
@@ -74,7 +72,7 @@ def calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms):
     Calculate the halo-halo correlation function
     for the full volume.
     """
-    redpath = halopath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    redpath = halopath
     infile = open(redpath,"r")
     halos = np.zeros((int(Nh),3))
     i = 0
@@ -107,7 +105,7 @@ def calculate_mean_mass(halopath,do_JK,ndivs):
     """
     Mtotal = 0.0
     N = 0
-    redpath = halopath+"/reduced_halo_cats/reduced_halo_cat.txt"
+    redpath = halopath
     infile = open(redpath,"r")
     for line in infile:
         if line[0] is "#": continue
