@@ -51,8 +51,6 @@ def compute_hmcf(outpath, catalog, halorandompath,
         import compute_hmcf_jk
         compute_hmcf_jk.calculate_JK_hmcf(outpath, jkcatalog, jkdms, edges, nbins, Rlimits, 
                                           halorandoms, dmrandoms, ndivs)
-        print "still working on JK HMCF"
-        sys.exit()
     print "Halo-matter correlation function calculated."
     return
 
