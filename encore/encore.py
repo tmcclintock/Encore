@@ -37,7 +37,7 @@ class encore(object):
         import reduce_catalogs
         cat   = getattr(self,"catalog")
         edges = getattr(self,"edges")
-        args  = {"outpath":"./", "particle_mass":None, "do_JK":False, "ndivs":2}
+        args  = {"outpath":"./", "particle_mass":None, "do_JK":False, "ndivs":4}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -61,10 +61,12 @@ class encore(object):
 
     def down_sample_dm(self):
         """Down sample the dark matter particles by a factor of DSF, which is short for "down sampling fraction".
+
+        Note: default down sample fraction is 1/1000, since anything larger than that has some chance of filling up the memory.
         """
         import down_sampling
         dmpath = getattr(self,"dmpath")
-        args      = {"outpath":"./", "dm_down_sample_fraction":0.01}
+        args      = {"outpath":"./", "dm_down_sample_fraction":0.001}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -76,8 +78,14 @@ class encore(object):
         """Jackknife the down sampled dark matter particle catalog.
         """
         import down_sampling
-        down_sampling.down_sampling.jackknife_dm(self.DSdmpath,
-                                                 self.DSF,self.ndivs)
+        dmpath = getattr(self,"dmpath")
+        edges = getattr(self,"edges")
+        args      = {"outpath":"./", "ndivs":4}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError: pass
+        down_sampling.down_sampling.jackknife_dm(args['outpath'], dmpath, edges, args['ndivs'])
         return
 
     def compute_mass_function(self):

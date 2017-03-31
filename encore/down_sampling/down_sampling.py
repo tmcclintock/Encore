@@ -34,7 +34,7 @@ def down_sample(outpath, dmpath, DSF):
     print "\tDown sampling complete."
     return
 
-def jackknife_dm(outpath,DSF,ndivs):
+def jackknife_dm(outpath, dmpath, edges, ndivs):
     """
     Jackknife the dark matter particles from the down-sampled
     dark matter catalog.
@@ -43,14 +43,7 @@ def jackknife_dm(outpath,DSF,ndivs):
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
 
     print "Jackknifing DM particles."
-    if os.path.exists(outpath+"/info_files/spatial_limits.txt"):
-        limits = np.loadtxt(outpath+"/info_files/spatial_limits.txt")
-    else:
-        raise Exception("Must find spatial limits before jackknifing dark matter particles.")
-
-    dx = (limits[0,1]-limits[0,0])/ndivs
-    dy = (limits[1,1]-limits[1,0])/ndivs
-    dz = (limits[2,1]-limits[2,0])/ndivs
+    dx = dy = dz = (edges[1] - edges[0])/ndivs
 
     jkoutbase = outpath+"/down_sampled_dm/JK_dm_cats/jk_dm_cat_%d.txt"
     jkarray = []
@@ -58,7 +51,7 @@ def jackknife_dm(outpath,DSF,ndivs):
     for i in xrange(0,Njks): jkarray.append(open(jkoutbase%i,"w"))
 
     #Read in the dm particles
-    dmpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%.2f"%DSF
+    dmpath = dmpath
     dm = pgr.readsnap(dmpath,"pos","dm")
     
     for i in xrange(0,len(dm)):
