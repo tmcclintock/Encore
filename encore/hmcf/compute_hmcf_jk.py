@@ -21,7 +21,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,DSF):
+def calculate_JK_hmcf(outpath, jkcatalog, jkdms, edges, nbins, Rlimits, halorandoms, dmrandoms, ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
 
@@ -39,15 +39,18 @@ def calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,
     Njk = int(ndivs**3)
 
     #Read in all halos
-    all_halos = read_halos(outpath,Njk)
+    print "\t\tReading in halos."
+    all_halos = read_halos(jkcatalog,Njk)
 
     #Read in all dm
-    all_dms = read_dm(outpath,Njk,edges,step,DSF)
+    print "\t\tReading in DM particles."
+    all_dms = read_dm(jkdms,Njk)
 
     #Treecorr interface
-    config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
+    config = {'nbins':nbins,'min_sep':Rlimits[0],'max_sep':Rlimits[1]}
 
     #Calculate RR autocorrelation once
+    print "\t\tPerforming RR autocorrelation."
     halorandom_cat = treecorr.Catalog(x=halorandoms[:,0],y=halorandoms[:,1],z=halorandoms[:,2],config=config)
     dmrandom_cat   = treecorr.Catalog(x=dmrandoms[:,0],y=dmrandoms[:,1],z=dmrandoms[:,2],config=config)
     RRa = treecorr.NNCorrelation(config)
@@ -56,6 +59,7 @@ def calculate_JK_hmcf(outpath,nbins,limits,edges,Nh,halorandoms,dmrandoms,ndivs,
     #Get all autocorrelations
     #These are all of length Njks
     DDa_all, DRa_all, RDa_all = calculate_autos(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Njk)
+    sys.exit()
 
     #Get all cross correlations
     DDc_all,DRc_all,RDc_all,RRc_all = calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Njk)
@@ -197,7 +201,8 @@ def calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
         halos = all_halos[index1]
         halo_cat = treecorr.Catalog(x=halos[:,0],
                                     y=halos[:,1],
-                                    z=halos[:,2],config=config)
+                                    z=halos[:,2],
+                                    config=config)
         i1 = index1%ndivs
         j1 = (index1/ndivs)%ndivs
         k1 = index1/ndivs**2
@@ -241,11 +246,12 @@ def calculate_autos(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
     DRa_all = []
     RDa_all = []
     for index in range(Njk):
-        halos = all_halos[index]
-        dm = all_dms[index]
         i = index%ndivs
         j = (index/ndivs)%ndivs
         k = index/ndivs**2
+        halos = all_halos[index]
+        dm = all_dms[index]
+
         halorandom_cat = treecorr.Catalog(x=halorandoms[:,0]+i*step,
                                           y=halorandoms[:,1]+j*step,
                                           z=halorandoms[:,2]+k*step,
@@ -274,7 +280,7 @@ def calculate_autos(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
     print "\t\tHMCF DD, DR, RD autocorrelations computed."
     return DDa_all,DRa_all,RDa_all
     
-def read_halos(outpath,Njk):
+def read_halos(jkcatalog,Njk):
     """
     Read in halos from the jackknife files.
     Returns an array of Njk X N_halos_i X 3 where
@@ -282,9 +288,8 @@ def read_halos(outpath,Njk):
     This is not a constant number.
     """
     all_halos = []
-    jkpath = outpath+"/JK_halo_cats/jk_halo_cat_%d.txt"
     for index in xrange(0,Njk):
-        infile = open(jkpath%index,"r")
+        infile = open(jkcatalog%index,"r")
         halos = [] #Will be Nhjk X 3
         for line in infile:
             if line[0] is "#": continue
@@ -295,18 +300,17 @@ def read_halos(outpath,Njk):
         all_halos.append(halos)
     return np.array(all_halos)
 
-def read_dm(outpath,Njk,edges,step,DSF):
+def read_dm(jkdms,Njk):
     """
     Read in dms from the jackknife files.
     Returns an array of Njk X N_dm_i X 3 where
     there are N_dm_i in the i'th JK file.
     This is not a constant number.
     """
-    dmpath = outpath+"/down_sampled_dm/JK_dm_cats/jk_dm_cat_%d.txt"
 
     all_dms = []
     for index in xrange(0,Njk):
-        dms = np.genfromtxt(dmpath%index)
+        dms = np.genfromtxt(jkdms%index)
         all_dms.append(dms)
     all_dms = np.array(all_dms)
     return all_dms

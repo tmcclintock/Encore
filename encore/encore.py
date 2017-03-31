@@ -51,7 +51,7 @@ class encore(object):
         import randoms
         edges     = getattr(self,"edges")
         N_randoms = getattr(self,"N_randoms")
-        args      = {"outpath":"./", "ndivs":2}
+        args      = {"outpath":"./", "ndivs":4}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -71,6 +71,7 @@ class encore(object):
             try:
                 args[key] = getattr(self,key)
             except AttributeError: pass
+        print "DSF = ",args['dm_down_sample_fraction']
         down_sampling.down_sampling.down_sample(args['outpath'], dmpath, args['dm_down_sample_fraction'])
         return
 
@@ -79,13 +80,14 @@ class encore(object):
         """
         import down_sampling
         dmpath = getattr(self,"dmpath")
-        edges = getattr(self,"edges")
+        edges  = getattr(self,"edges")
+        DSF    = getattr(self,"dm_down_sample_fraction")
         args      = {"outpath":"./", "ndivs":4}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
             except AttributeError: pass
-        down_sampling.down_sampling.jackknife_dm(args['outpath'], dmpath, edges, args['ndivs'])
+        down_sampling.down_sampling.jackknife_dm(args['outpath'], dmpath, edges, DSF, args['ndivs'])
         return
 
     def compute_mass_function(self):
@@ -96,7 +98,7 @@ class encore(object):
         """
         import mass_function
         cat  = getattr(self,"catalog")
-        args = {"outpath":"./", "jkcatalog":None, "nbins":10, "do_JK":False, "ndivs":2}
+        args = {"outpath":"./", "jkcatalog":None, "nbins":10, "do_JK":False, "ndivs":4}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -111,7 +113,7 @@ class encore(object):
         cat   = getattr(self,"catalog")
         rands = getattr(self,"randoms")
         edges = getattr(self,"edges")
-        args  = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkrands":None, "ndivs":2}
+        args  = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkrands":None, "ndivs":4}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -119,20 +121,22 @@ class encore(object):
         hhcf.compute_hhcf(args['outpath'], cat, rands, args['jkcatalog'], args['jkrands'], args['nbins'], args['Rlimits'], edges, args['do_JK'], args['ndivs'])
         return
 
-    def compute_hmcf(self,edges,nbins=10,limits=[1.0,50.0],do_JK=None):
+    def compute_hmcf(self):
         """Compute the halo-matter correlation function.
-        
-        Args:
-            edges (array_like): Spatial edges that contain the random points. Assumes a cube.
-            nbins (int): Number of mass bins to put halos in; default is 10.
-            limits (double): Radial limits of the bins of the correlation function; default is [1.0,50.0].
-            do_JK (bool): Flag to turn on partitioning into jackknife regions; default uses the value passed at initialization.
-
         """
         import hmcf
-        if do_JK is None: do_JK = self.do_JK
-        hmcf.compute_hmcf(self.outpath,self.DSdmpath,self.randompath,
-                          nbins,limits,edges,do_JK,self.ndivs,self.DSF)
+        cat     = getattr(self,"catalog")
+        rands   = getattr(self,"randoms")
+        dms     = getattr(self,"dms")
+        dmrands = getattr(self,"dmrandoms")
+        edges = getattr(self,"edges")
+        args  = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkdms":None, "jkrands":None, "jkdmrands":None, "ndivs":4}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError: pass
+        hmcf.compute_hmcf(args['outpath'], cat, rands, dms, dmrands, edges, args['nbins'], args['Rlimits'], args['do_JK'], 
+                          args['jkcatalog'], args['jkdms'], args['jkrands'], args['jkdmrands'], args['ndivs'])
         return
 
 if __name__=="__main__":
