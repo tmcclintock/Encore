@@ -178,7 +178,8 @@ def calculate_cross(config,all_halos,randoms,step,ndivs,Njk):
         halos1 = all_halos[index1]
         halo_cat1 = treecorr.Catalog(x=halos1[:,0],
                                      y=halos1[:,1],
-                                     z=halos1[:,2],config=config)
+                                     z=halos1[:,2],
+                                     config=config)
         random_cat1 = treecorr.Catalog(x=randoms[:,0]+i1*step,
                                        y=randoms[:,1]+j1*step,
                                        z=randoms[:,2]+k1*step,
@@ -232,10 +233,12 @@ def calculate_autos(config,all_halos,randoms,step,ndivs,Njk):
         k = index/ndivs**2
         random_cat = treecorr.Catalog(x=randoms[:,0]+i*step,
                                       y=randoms[:,1]+j*step,
-                                      z=randoms[:,2]+k*step,config=config)
+                                      z=randoms[:,2]+k*step,
+                                      config=config)
         halo_cat = treecorr.Catalog(x=halos[:,0],
                                     y=halos[:,1],
-                                    z=halos[:,2],config=config)
+                                    z=halos[:,2],
+                                    config=config)
         DD = treecorr.NNCorrelation(config)
         DR = treecorr.NNCorrelation(config)
         DD.process(halo_cat)
