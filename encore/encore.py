@@ -35,9 +35,9 @@ class encore(object):
             recreate (bool): Flag to re-reduce the rockstar catalog, even if it's already reduced; default False.
         """
         import reduce_catalogs
-        cat = getattr(self,"catalog")
+        cat   = getattr(self,"catalog")
         edges = getattr(self,"edges")
-        args = {"outpath":"./", "particle_mass":None, "do_JK":False, "ndivs":2}
+        args  = {"outpath":"./", "particle_mass":None, "do_JK":False, "ndivs":2}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -49,9 +49,9 @@ class encore(object):
         """Create catalogs of random points in a volume specified by the user.
         """
         import randoms
-        edges = getattr(self,"edges")
+        edges     = getattr(self,"edges")
         N_randoms = getattr(self,"N_randoms")
-        args = {"outpath":"./", "ndivs":2}
+        args      = {"outpath":"./", "ndivs":2}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
@@ -59,20 +59,17 @@ class encore(object):
         randoms.create_random_catalogs.create_halo_random_catalog(args['outpath'], N_randoms, edges, args['ndivs'])
         return
 
-    def down_sample_dm(self,DSF=None):
-        """Down sample the dark matter particles by a factor of DSF, which is short for "down sampling factor".
-
-        Args:
-            DSF (int): Factor by which the dark matter particles is reduced by. E.g. 10 means only one tenth of the particles are kept; default is value passed at initialization.
+    def down_sample_dm(self):
+        """Down sample the dark matter particles by a factor of DSF, which is short for "down sampling fraction".
         """
         import down_sampling
-        if DSF is None: DSF = self.DSF
-        else: self.DSF = DSF
-        if not self.down_sampled:
-            down_sampling.down_sampling.down_sample(self.DSdmpath,
-                                                    self.dmpath,DSF)
-            self.down_sampled = True
-        else: print "Already down sampled."
+        dmpath = getattr(self,"dmpath")
+        args      = {"outpath":"./", "dm_down_sample_fraction":0.01}
+        for key in args.keys():
+            try:
+                args[key] = getattr(self,key)
+            except AttributeError: pass
+        down_sampling.down_sampling.down_sample(args['outpath'], dmpath, args['dm_down_sample_fraction'])
         return
 
     def jackknife_dm(self):
@@ -90,7 +87,7 @@ class encore(object):
         E.g.: jk_halo_catalog%d.txt
         """
         import mass_function
-        cat = getattr(self,"catalog")
+        cat  = getattr(self,"catalog")
         args = {"outpath":"./", "jkcatalog":None, "nbins":10, "do_JK":False, "ndivs":2}
         for key in args.keys():
             try:
@@ -103,10 +100,10 @@ class encore(object):
         """Compute the halo-halo correlation function.
         """
         import hhcf
-        cat = getattr(self,"catalog")
+        cat   = getattr(self,"catalog")
         rands = getattr(self,"randoms")
         edges = getattr(self,"edges")
-        args = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkrands":None, "ndivs":2}
+        args  = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkrands":None, "ndivs":2}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)

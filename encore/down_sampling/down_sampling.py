@@ -1,10 +1,10 @@
 """
 Perform the dark matter down sampling.
 
-Note: DSF stands for "down sampling factor"
+Note: DSF stands for "down sampling fraction"
 and is the multiplicative factor that the number
 of dark matter particles will be reduced by. So if
-DSF is 10 then only one tenth of the particles
+DSF is 0.1 then only one tenth of the particles
 will remain.
 """
 import os, inspect
@@ -15,17 +15,17 @@ try: import pygadgetreader as pgr
 except ImportError: raise Exception("Must install pygadgetreader.")
 
 
-def down_sample(outpath,dmpath,DSF):
+def down_sample(outpath, dmpath, DSF):
     #Create the directories to put the down-sampling output
     os.system("mkdir -p %s"%outpath+"/down_sampled_dm/")
 
     print "Down sampling on file: %s"%dmpath
-    print "\tDSF = %d"%DSF
+    print "\tDSF = %f"%DSF
 
     Ndm = pgr.readheader(dmpath,"dmcount")
-    Nds = Ndm/DSF
+    Nds = int(Ndm*DSF) #Number of particles to keep
 
-    DSpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF
+    DSpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%.2f"%DSF
     if os.path.exists(DSpath): print "Down sampled DM catalog already exists."
     else:
         command = dirname+"/subsample_code/subsamp_parts LGADGET %s %d %s"%(dmpath,Nds,DSpath)
@@ -58,7 +58,7 @@ def jackknife_dm(outpath,DSF,ndivs):
     for i in xrange(0,Njks): jkarray.append(open(jkoutbase%i,"w"))
 
     #Read in the dm particles
-    dmpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%d"%DSF
+    dmpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%.2f"%DSF
     dm = pgr.readsnap(dmpath,"pos","dm")
     
     for i in xrange(0,len(dm)):
