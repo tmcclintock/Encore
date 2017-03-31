@@ -36,11 +36,11 @@ def compute_hhcf(outpath, halopath, randpath, jkhalopath, jkrandpath, nbins, lim
     create_hhcf_directories(outpath)
 
     #Step 1: calculate the mean masses
-    if os.path.exists(outpath+"/info_files/halo_mass_info.txt"):
-        halo_mass_info = np.loadtxt(outpath+"/info_files/halo_mass_info.txt")
+    if os.path.exists(outpath+"/halo_mass_info.txt"):
+        halo_mass_info = np.loadtxt(outpath+"/halo_mass_info.txt")
     else:
         halo_mass_info = calculate_mean_mass(halopath,do_JK,ndivs)
-        np.savetxt(outpath+"/info_files/halo_mass_info.txt",halo_mass_info)
+        np.savetxt(outpath+"/halo_mass_info.txt",halo_mass_info)
     print "\tHalo masses averaged, results:"
     print "\t\tMmean  = %e"%halo_mass_info[0]
     print "\t\tMtotal = %e"%halo_mass_info[1]
