@@ -33,6 +33,7 @@ def compute_hmcf(outpath, catalog, halorandompath,
     create_hmcf_directories(outpath)
 
     #Step 2: get random catalogs.
+    print "\tLoading random catalogs."
     if os.path.exists(halorandompath) and os.path.exists(dmrandompath): 
         halorandoms = np.loadtxt(halorandompath)
         dmrandoms = np.loadtxt(dmrandompath)
