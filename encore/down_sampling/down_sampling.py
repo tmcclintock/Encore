@@ -25,7 +25,7 @@ def down_sample(outpath, dmpath, DSF):
     Ndm = pgr.readheader(dmpath,"dmcount")
     Nds = int(Ndm*DSF) #Number of particles to keep
 
-    DSpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%.2f"%DSF
+    DSpath = outpath+"/down_sampled_dm/down_sampled_dm_DSF%.2e"%DSF
     if os.path.exists(DSpath): print "Down sampled DM catalog already exists."
     else:
         command = dirname+"/subsample_code/subsamp_parts LGADGET %s %d %s"%(dmpath,Nds,DSpath)
@@ -34,21 +34,21 @@ def down_sample(outpath, dmpath, DSF):
     print "\tDown sampling complete."
     return
 
-def jackknife_dm(outpath, dmpath, edges, ndivs):
+def jackknife_dm(outpath, dmpath, edges, DSF, ndivs):
     """
     Jackknife the dark matter particles from the down-sampled
     dark matter catalog.
     """
     #Create the output directory for this function
-    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_cats")
+    os.system("mkdir -p %s"%outpath+"/down_sampled_dm/JK_dm_DSF%.2e_cats"%DSF)
 
     print "Jackknifing DM particles."
     dx = dy = dz = (edges[1] - edges[0])/ndivs
 
-    jkoutbase = outpath+"/down_sampled_dm/JK_dm_cats/jk_dm_cat_%d.txt"
+    jkoutbase = outpath+"/down_sampled_dm/JK_dm_DSF%.2e_cats/jk_dm_cat_%d.txt"
     jkarray = []
     Njks = ndivs**3
-    for i in xrange(0,Njks): jkarray.append(open(jkoutbase%i,"w"))
+    for i in xrange(0,Njks): jkarray.append(open(jkoutbase%(DSF,i),"w"))
 
     #Read in the dm particles
     dmpath = dmpath
