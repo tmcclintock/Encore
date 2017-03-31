@@ -19,7 +19,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 #A constant we use
-sqrt2 = np.sqrt(2)
+sqrt3 = np.sqrt(3)
 
 def calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,randoms,ndivs):
     """Calculate the halo-halo correlation function for the JK subregions.
@@ -189,7 +189,7 @@ def calculate_cross(config,all_halos,randoms,step,ndivs,Njk):
             k2 = index2/ndivs**2
             #Figure out if the separation is large enough to skip
             max_sep = config['max_sep']
-            if max_sep < step*(np.sqrt((i1-i2)**2+(j1-j2)**2+(k1-k2)**2)-sqrt2):
+            if max_sep < step*(np.sqrt((i1-i2)**2+(j1-j2)**2+(k1-k2)**2)-sqrt3):
                 continue #Skip this cross correlation
 
             #print "Cross correlating %d vs %d"%(index1, index2)
@@ -211,7 +211,7 @@ def calculate_cross(config,all_halos,randoms,step,ndivs,Njk):
             RD.process(random_cat1,halo_cat2)
             RR.process(random_cat1,random_cat2)
             DDc_all[index1]+=DD
-            DDc_all[index2]+=DD 
+            DDc_all[index2]+=DD
             DRc_all[index1]+=DR
             DRc_all[index1]+=RD
             DRc_all[index2]+=DR
