@@ -102,7 +102,7 @@ def calculate_cov_matrix(outpath,xi_all,nbins,Njk):
     for i in range(nbins):
         for j in range(nbins):
             cov[i,j] = C*np.sum((xi_true[i]-xi_all[:,i])*(xi_true[j]-xi_all[:,j]))
-    covpath = outpath+"halohalo_correlation_function/cov_matrix/cov_matrix.txt"
+    covpath = outpath+"/halohalo_correlation_function/cov_matrix/cov_matrix.txt"
     np.savetxt(covpath,cov)
     return cov
 

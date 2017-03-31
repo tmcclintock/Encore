@@ -33,7 +33,6 @@ def compute_hmcf(outpath, catalog, halorandompath,
     create_hmcf_directories(outpath)
 
     #Step 2: get random catalogs.
-    """
     if os.path.exists(halorandompath) and os.path.exists(dmrandompath): 
         halorandoms = np.loadtxt(halorandompath)
         dmrandoms = np.loadtxt(dmrandompath)
@@ -44,8 +43,6 @@ def compute_hmcf(outpath, catalog, halorandompath,
 
     #Step 3: calculate the full HM correlation function
     Nhalos = calcalate_hmcf_full(outpath, catalog, dmpath, nbins, Rlimits, halorandoms, dmrandoms)
-    """
-    print "Skipped the HMCF full for debugging"
 
     #Step 4: calculate the HM correlation function within JK subregions
     if do_JK:
