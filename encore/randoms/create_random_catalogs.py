@@ -35,12 +35,16 @@ def create_halo_random_catalog(outpath, N_randoms, edges, ndivs):
     np.savetxt(outpath+"/randoms/full_halo_random.txt",pos)
 
     widthjk = width/ndivs
-    xjk = np.random.rand(Nrjk)*widthjk
-    yjk = np.random.rand(Nrjk)*widthjk
-    zjk = np.random.rand(Nrjk)*widthjk
-    posjk = np.array([xjk,yjk,zjk]).T
-    np.savetxt(outpath+"/randoms/jk_halo_random.txt",posjk)
-
+    for index in range(0,Njk):
+        i = index%ndivs
+        j = (index/ndivs)%ndivs
+        k = index/ndivs**2
+        xjk = np.random.rand(Nrjk)*widthjk + i*widthjk
+        yjk = np.random.rand(Nrjk)*widthjk + j*widthjk
+        zjk = np.random.rand(Nrjk)*widthjk + k*widthjk
+        posjk = np.array([xjk,yjk,zjk]).T
+        np.savetxt(outpath+"/randoms/jk_halo_random_%d.txt"%index,posjk)
+                
     print "\t\tN_DM_randoms full   = %d"%Nrdm
     print "\t\tN_DM_randoms/JK     = %d"%Nrjkdm
     x = np.random.rand(Nrdm)*width
@@ -49,11 +53,15 @@ def create_halo_random_catalog(outpath, N_randoms, edges, ndivs):
     pos = np.array([x,y,z]).T
     np.savetxt(outpath+"/randoms/full_dm_random.txt",pos)
 
-    xjk = np.random.rand(Nrjkdm)*widthjk
-    yjk = np.random.rand(Nrjkdm)*widthjk
-    zjk = np.random.rand(Nrjkdm)*widthjk
-    posjk = np.array([xjk,yjk,zjk]).T
-    np.savetxt(outpath+"/randoms/jk_dm_random.txt",posjk)
+    for index in range(0,Njk):
+        i = index%ndivs
+        j = (index/ndivs)%ndivs
+        k = index/ndivs**2
+        xjk = np.random.rand(Nrjkdm)*widthjk + i*widthjk
+        yjk = np.random.rand(Nrjkdm)*widthjk + j*widthjk
+        zjk = np.random.rand(Nrjkdm)*widthjk + k*widthjk
+        posjk = np.array([xjk,yjk,zjk]).T
+        np.savetxt(outpath+"/randoms/jk_dm_random_%d.txt"%index,posjk)
 
     print "\tRandom catalogs created."
     return

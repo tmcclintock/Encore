@@ -50,11 +50,6 @@ def compute_hhcf(outpath, halopath, randpath, jkhalopath, jkrandpath, nbins, lim
     #Step 2: get random catalogs.
     if os.path.exists(randpath): randoms = np.loadtxt(randpath)
     else: raise Exception("Must create random catalog first.")
-    if do_JK: randomsjk = np.loadtxt(jkrandpath)
-    else: randomsjk = None
-    print "\tRandom catalogs loaded. Using random catalogs with:"
-    print "\t\tN_randoms full = %d"%len(randoms)
-    if do_JK: print "\t\tN_randoms JK   = %d"%len(randomsjk)
 
     #Step 3: calculate the full HH correlation function
     calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms)
@@ -62,7 +57,7 @@ def compute_hhcf(outpath, halopath, randpath, jkhalopath, jkrandpath, nbins, lim
     #Step 4: calculate the HH correlation function within JK subregions
     if do_JK:
         import compute_hhcf_jk
-        compute_hhcf_jk.calculate_JK_hhcf(outpath,jkhalopath,nbins,limits,edges,Nh,randomsjk,ndivs)
+        compute_hhcf_jk.calculate_JK_hhcf(outpath,jkhalopath,nbins,limits,edges,Nh,jkrandpath,ndivs)
 
     print "Halo-halo correlation function complete."
     return
@@ -93,7 +88,6 @@ def calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms):
     DR.process(halo_cat,random_cat)
     RR.process(random_cat)
     DD.write(outpath+"/halohalo_correlation_function/full_hhcf/full_hhcf.txt",RR,DR)
-
     print "\tFull halo-halo correlation function complete."
     return
 
