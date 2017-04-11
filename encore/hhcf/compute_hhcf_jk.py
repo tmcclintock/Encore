@@ -259,7 +259,7 @@ def calculate_autos(outpath,config,all_halos,all_rands,step,ndivs,Njk):
         DRa_all.append(DR)
         RRa_all.append(RR)
         DD.write(outpath+"/halohalo_correlation_function/JK_single/AUTO%d.txt"%index,RR,DR)
-    print "\t\tHHCF DD and DR autocorrelations computed."
+    print "\t\tHHCF DD, DR and RR autocorrelations computed."
     return DDa_all, DRa_all, RRa_all
 
 def read_jk_cats(halopath, Njk):

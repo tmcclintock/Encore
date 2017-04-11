@@ -47,11 +47,9 @@ def compute_hmcf(outpath, catalog, halorandompath,
 
     #Step 4: calculate the HM correlation function within JK subregions
     if do_JK:
-        halorandoms = np.loadtxt(jkrands)
-        dmrandoms = np.loadtxt(jkdmrands)
         import compute_hmcf_jk
         compute_hmcf_jk.calculate_JK_hmcf(outpath, jkcatalog, jkdms, edges, nbins, Rlimits, 
-                                          halorandoms, dmrandoms, ndivs)
+                                          jkrands, jkdmrands, ndivs)
     print "Halo-matter correlation function calculated."
     return
 
@@ -95,10 +93,10 @@ def calcalate_hmcf_full(outpath, catalog, dmpath, nbins, Rlimits, halorandoms, d
     DR = treecorr.NNCorrelation(config)
     RD = treecorr.NNCorrelation(config)
     RR = treecorr.NNCorrelation(config)
-    DD.process(halo_cat,dm_cat)
-    DR.process(halo_cat,halorandom_cat)
-    RD.process(dm_cat,dmrandom_cat)
-    RR.process(halorandom_cat,dmrandom_cat)
+    DD.process_cross(halo_cat,dm_cat)
+    DR.process_cross(halo_cat,halorandom_cat)
+    RD.process_cross(dm_cat,dmrandom_cat)
+    RR.process_cross(halorandom_cat,dmrandom_cat)
     DD.write(outpath+"/halomatter_correlation_function/full_hmcf/full_hmcf.txt",RR,DR,RD)
     print "\tHalo-matter correlation function full complete."
     return Nh

@@ -23,7 +23,7 @@ m_index = indices['m']
 #A constant we use
 sqrt3 = np.sqrt(3)
 
-def calculate_JK_hmcf(outpath, jkcatalog, jkdms, edges, nbins, Rlimits, halorandoms, dmrandoms, ndivs):
+def calculate_JK_hmcf(outpath, jkcatalog, jkdms, edges, nbins, Rlimits, jkrandpath, jkdmrandpath, ndivs):
     """
     Calculate the halo-halo correlation function for the JK subregions.
 
@@ -40,36 +40,28 @@ def calculate_JK_hmcf(outpath, jkcatalog, jkdms, edges, nbins, Rlimits, halorand
     step = (edges[1]-edges[0])/ndivs
     Njk = int(ndivs**3)
 
-    #Read in all halos
-    print "\t\tReading in halos."
-    all_halos = read_halos(jkcatalog,Njk)
-
-    #Read in all dm
-    print "\t\tReading in DM particles."
+    #Read in all halos, dm and randoms
+    print "\t\tReading in halos, DM particles and randoms."
+    all_halos = read_jk_cats(jkcatalog,Njk)
     all_dms = read_dm(jkdms,Njk)
+    all_rands = read_jk_cats(jkrandpath,Njk)
+    all_dmrands = read_jk_cats(jkdmrandpath,Njk)
 
     #Treecorr interface
-    config = {'nbins':nbins,'min_sep':Rlimits[0],'max_sep':Rlimits[1]}
-
-    #Calculate RR autocorrelation once
-    print "\t\tPerforming RR autocorrelation."
-    halorandom_cat = treecorr.Catalog(x=halorandoms[:,0],y=halorandoms[:,1],z=halorandoms[:,2],config=config)
-    dmrandom_cat   = treecorr.Catalog(x=dmrandoms[:,0],y=dmrandoms[:,1],z=dmrandoms[:,2],config=config)
-    RRa = treecorr.NNCorrelation(config)
-    RRa.process(halorandom_cat,dmrandom_cat)
+    config = {'nbins':nbins,'min_sep':Rlimits[0],'max_sep':Rlimits[1],'bin_slop':0.5,'verbose':0}
 
     #Get all autocorrelations
     #These are all of length Njks
-    DDa_all, DRa_all, RDa_all = calculate_autos(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Njk)
+    DDa_all, DRa_all, RDa_all, RRa_all = calculate_autos(config,all_halos,all_dms,all_rands,all_dmrands,step,ndivs,Njk)
 
     #Get all cross correlations
-    DDc_all,DRc_all,RDc_all,RRc_all = calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Njk)
+    DDc_all,DRc_all,RDc_all,RRc_all = calculate_cross(config,all_halos,all_dms,all_rands,all_dmrands,step,ndivs,Njk)
 
     #Find the totals
-    DDt,DRt,RDt,RRt = calculate_total(RRa,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk,config)
+    DDt,DRt,RDt,RRt = calculate_total(DDa_all,DRa_all,RDa_all,RRa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk,config)
 
     #Find each of the xi curves
-    xi_all = calculate_xi_LOO(RRa,DDt,DRt,RDt,RRt,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk)
+    xi_all = calculate_xi_LOO(DDt,DRt,RDt,RRt,DDa_all,DRa_all,RDa_all,RRa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk)
 
     #Find the covariance matrix
     cov = calculate_cov_matrix(outpath,xi_all,nbins,Njk)
@@ -115,24 +107,26 @@ def calculate_cov_matrix(outpath,xi_all,nbins,Njk):
     return cov
 
 def add_with_mult(NN1, NN2, x):
+    NN1.meanr  += x * NN2.meanr
+    NN1.meanlogr += x * NN2.meanlogr
     NN1.weight += x * NN2.weight
     NN1.npairs += x * NN2.npairs
     NN1.tot    += x * NN2.tot
     return
 
 def subtract_with_mult(NN1, NN2, x):
+    NN1.meanr  -= x * NN2.meanr
+    NN1.meanlogr -= x * NN2.meanlogr
     NN1.weight -= x * NN2.weight
     NN1.npairs -= x * NN2.npairs
     NN1.tot    -= x * NN2.tot
     return
 
-def calculate_xi_LOO(RRa,DDt,DRt,RDt,RRt,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk):
+def calculate_xi_LOO(DDt,DRt,RDt,RRt,DDa_all,DRa_all,RDa_all,RRa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk):
     """
     Calculate the leave-one-out HHCFs.
     """
     xi_all = []
-    RRla = RRt.copy()
-    subtract_with_mult(RRla, RRa, 1.0) #Remove RR autocorrelation
     for i in range(Njk):
         DDl = DDt.copy() #Copy the totals
         DRl = DRt.copy() #DhRh
@@ -142,6 +136,7 @@ def calculate_xi_LOO(RRa,DDt,DRt,RDt,RRt,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all
         subtract_with_mult(DDl, DDa_all[i], 1.0)
         subtract_with_mult(DRl, DRa_all[i], 1.0)
         subtract_with_mult(RDl, RDa_all[i], 1.0)
+        subtract_with_mult(RRl, RRa_all[i], 1.0)
 
         #Remove cross correlations
         subtract_with_mult(DDl, DDc_all[i], 1.0)
@@ -155,7 +150,7 @@ def calculate_xi_LOO(RRa,DDt,DRt,RDt,RRt,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all
     print "\t\tLeave-one-out HMCFs calculated."
     return np.array(xi_all)
 
-def calculate_total(RRa,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk,config):
+def calculate_total(DDa_all,DRa_all,RDa_all,RRa_all,DDc_all,DRc_all,RDc_all,RRc_all,Njk,config):
     """Resum the auto and cross correlations to get total quantities.
     """
     DDt = treecorr.NNCorrelation(config)
@@ -166,7 +161,7 @@ def calculate_total(RRa,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all,RDc_all,RRc_all,
         DDt+=DDa_all[i]
         DRt+=DRa_all[i]
         RDt+=RDa_all[i]
-        RRt+=RRa
+        RRt+=RRa_all[i]
         add_with_mult(DDt, DDc_all[i], 0.5)
         add_with_mult(DRt, DRc_all[i], 0.5)
         add_with_mult(RDt, RDc_all[i], 0.5)
@@ -174,7 +169,7 @@ def calculate_total(RRa,DDa_all,DRa_all,RDa_all,DDc_all,DRc_all,RDc_all,RRc_all,
     print "\t\tResumming HMCF JK total complete."
     return DDt,DRt,RDt,RRt
 
-def calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Njk):
+def calculate_cross(config,all_halos,all_dms,all_rands,all_dmrands,step,ndivs,Njk):
     """Calcualte the DD, DR, RD and RR cross correlations
     """
     print "\t\tPerforming DD, DR, RD crosscorrelations."
@@ -194,13 +189,14 @@ def calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
         j1 = (index1/ndivs)%ndivs
         k1 = index1/ndivs**2
         halos = all_halos[index1]
+        dmrandoms = all_dmrands[index1]
         halo_cat = treecorr.Catalog(x=halos[:,0],
                                     y=halos[:,1],
                                     z=halos[:,2],
                                     config=config)
-        dmrandom_cat = treecorr.Catalog(x=dmrandoms[:,0]+i1*step,
-                                        y=dmrandoms[:,1]+j1*step,
-                                        z=dmrandoms[:,2]+k1*step,
+        dmrandom_cat = treecorr.Catalog(x=dmrandoms[:,0],
+                                        y=dmrandoms[:,1],
+                                        z=dmrandoms[:,2],
                                         config=config)
         for index2 in xrange(index1+1,Njk):
             i2 = index2%ndivs
@@ -213,21 +209,22 @@ def calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
 
             print "Cross correlating %d vs %d"%(index1, index2)
             dm = all_dms[index2]
+            halorandoms = all_rands[index2]
             dm_cat = treecorr.Catalog(x=dm[:,0],
                                       y=dm[:,1],
                                       z=dm[:,2],config=config)
-            halorandom_cat = treecorr.Catalog(x=halorandoms[:,0]+i2*step,
-                                              y=halorandoms[:,1]+j2*step,
-                                              z=halorandoms[:,2]+k2*step,
+            halorandom_cat = treecorr.Catalog(x=halorandoms[:,0],
+                                              y=halorandoms[:,1],
+                                              z=halorandoms[:,2],
                                               config=config)
             DD = treecorr.NNCorrelation(config)
             DR = treecorr.NNCorrelation(config)
             RD = treecorr.NNCorrelation(config)
             RR = treecorr.NNCorrelation(config)
-            DD.process(halo_cat,dm_cat)
-            DR.process(halo_cat,halorandom_cat)
-            RD.process(dm_cat,dmrandom_cat)
-            RR.process(dmrandom_cat,halorandom_cat)
+            DD.process_cross(halo_cat,dm_cat)
+            DR.process_cross(halo_cat,halorandom_cat)
+            RD.process_cross(dm_cat,dmrandom_cat)
+            RR.process_cross(dmrandom_cat,halorandom_cat)
             DDc_all[index1]+=DD
             DDc_all[index2]+=DD
 
@@ -239,33 +236,32 @@ def calculate_cross(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
 
             RRc_all[index1]+=RR
             RRc_all[index2]+=RR
-    return DDc_all,DRc_all,RDc_all,RRc_all
+    return DDc_all, DRc_all, RDc_all, RRc_all
 
-def calculate_autos(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Njk):
+def calculate_autos(config,all_halos,all_dms,all_rands,all_dmrands,step,ndivs,Njk):
     """Calculate the DD, DR, RD autocorrelations
     """
-    print "\t\tPerforming DD, DR, RD autocorrelations."
+    print "\t\tPerforming DD, DR, RD, RR autocorrelations."
     DDa_all = []
     DRa_all = []
     RDa_all = []
+    RRa_all = []
     for index in range(Njk):
-        i = index%ndivs
-        j = (index/ndivs)%ndivs
-        k = index/ndivs**2
         halos = all_halos[index]
         dm = all_dms[index]
-
-        halorandom_cat = treecorr.Catalog(x=halorandoms[:,0]+i*step,
-                                          y=halorandoms[:,1]+j*step,
-                                          z=halorandoms[:,2]+k*step,
+        halorandoms = all_rands[index]
+        dmrandoms = all_dmrands[index]
+        halorandom_cat = treecorr.Catalog(x=halorandoms[:,0],
+                                          y=halorandoms[:,1],
+                                          z=halorandoms[:,2],
                                           config=config)
         halo_cat = treecorr.Catalog(x=halos[:,0],
                                     y=halos[:,1],
                                     z=halos[:,2],
                                     config=config)
-        dmrandom_cat = treecorr.Catalog(x=dmrandoms[:,0]+i*step,
-                                        y=dmrandoms[:,1]+j*step,
-                                        z=dmrandoms[:,2]+k*step,
+        dmrandom_cat = treecorr.Catalog(x=dmrandoms[:,0],
+                                        y=dmrandoms[:,1],
+                                        z=dmrandoms[:,2],
                                         config=config)
         dm_cat = treecorr.Catalog(x=dm[:,0],
                                   y=dm[:,1],
@@ -274,16 +270,19 @@ def calculate_autos(config,all_halos,all_dms,halorandoms,dmrandoms,step,ndivs,Nj
         DD = treecorr.NNCorrelation(config)
         DR = treecorr.NNCorrelation(config)
         RD = treecorr.NNCorrelation(config)
-        DD.process(halo_cat,dm_cat)
-        DR.process(halo_cat,halorandom_cat)
-        RD.process(dm_cat,dmrandom_cat)
+        RR = treecorr.NNCorrelation(config)
+        DD.process_cross(halo_cat,dm_cat)
+        DR.process_cross(halo_cat,halorandom_cat)
+        RD.process_cross(dm_cat,dmrandom_cat)
+        RR.process_cross(halorandom_cat, dmrandom_cat)
         DDa_all.append(DD)
         DRa_all.append(DR)
         RDa_all.append(RD)
-    print "\t\tHMCF DD, DR, RD autocorrelations computed."
-    return DDa_all,DRa_all,RDa_all
+        RRa_all.append(RR)
+    print "\t\tHMCF DD, DR, RD, RR autocorrelations computed."
+    return DDa_all, DRa_all, RDa_all, RRa_all
     
-def read_halos(jkcatalog,Njk):
+def read_jk_cats(jkcatalog,Njk):
     """
     Read in halos from the jackknife files.
     Returns an array of Njk X N_halos_i X 3 where
