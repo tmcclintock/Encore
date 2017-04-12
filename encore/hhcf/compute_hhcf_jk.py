@@ -44,7 +44,7 @@ def calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,jkrandpath,ndivs):
     all_rands = read_jk_cats(jkrandpath,Njk)
 
     #Treecorr interface
-    config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1],'bin_slop':1.0,'verbose':0}
+    config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1],'bin_slop':0.3,'verbose':0}
     
     #Get all autocorrelations
     #These are all of length Njks
