@@ -6,6 +6,11 @@ try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 try: import treecorr
 except ImportError: raise Exception("Must install treecorr.")
+try: 
+    from Corrfunc.theory.xi import cfxi
+    from Corrfunc.theory.DD import cfDD
+except ImportError: raise Exception("Must install Corrfunc.")
+
 
 #Pull out the indices
 indices = {}
