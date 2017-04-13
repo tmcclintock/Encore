@@ -7,6 +7,11 @@ try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
 try: import treecorr
 except ImportError: raise Exception("Must install treecorr.")
+try: 
+    from Corrfunc.theory.DD import DD
+    from Corrfunc.theory.xi import xi
+except ImportError: raise Exception("Must install Corrfunc.")
+
 
 #Pull out the indices
 indices = {}
@@ -21,7 +26,7 @@ m_index = indices['m']
 #A constant we use
 sqrt3 = np.sqrt(3)
 
-def calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,jkrandpath,ndivs):
+def calculate_JK_hhcf(outpath, halopath, nbins, limits, edges, ndivs):
     """Calculate the halo-halo correlation function for the JK subregions.
 
     Inputs:
@@ -38,6 +43,7 @@ def calculate_JK_hhcf(outpath,halopath,nbins,limits,edges,Nh,jkrandpath,ndivs):
     #Jackknife subregion step size
     step = (edges[1]-edges[0])/ndivs
     Njk = int(ndivs**3)
+    sys.exit()
 
     #Read in all halos
     all_halos = read_jk_cats(halopath,Njk)

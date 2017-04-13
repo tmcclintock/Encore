@@ -111,14 +111,13 @@ class encore(object):
         """
         import hhcf
         cat   = getattr(self,"catalog")
-        rands = getattr(self,"randoms")
         edges = getattr(self,"edges")
-        args  = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "jkrands":None, "ndivs":4}
+        args  = {"outpath":"./", "nbins":10, "Rlimits":[1.0,50.0], "do_JK":False, "jkcatalog":None, "ndivs":4}
         for key in args.keys():
             try:
                 args[key] = getattr(self,key)
             except AttributeError: pass
-        hhcf.compute_hhcf(args['outpath'], cat, rands, args['jkcatalog'], args['jkrands'], args['nbins'], args['Rlimits'], edges, args['do_JK'], args['ndivs'])
+        hhcf.compute_hhcf(args['outpath'], cat, args['jkcatalog'], args['nbins'], args['Rlimits'], edges, args['do_JK'], args['ndivs'])
         return
 
     def compute_hmcf(self):

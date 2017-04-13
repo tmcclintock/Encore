@@ -4,8 +4,11 @@ Compute the halo-halo correlation function.
 import os,sys
 try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
-try: import treecorr
-except ImportError: raise Exception("Must install treecorr.")
+try: 
+    from Corrfunc.theory.DD import DD
+    from Corrfunc.theory.xi import xi
+except ImportError: raise Exception("Must install Corrfunc.")
+
 
 #Pull out the indices
 indices = {}
@@ -18,7 +21,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hhcf(outpath, halopath, randpath, jkhalopath, jkrandpath, nbins, limits, edges, do_JK, ndivs):
+def compute_hhcf(outpath, halopath, jkhalopath, nbins, limits, edges, do_JK, ndivs):
     """
     Compute the halo-halo correlation function.
 
@@ -35,81 +38,38 @@ def compute_hhcf(outpath, halopath, randpath, jkhalopath, jkrandpath, nbins, lim
     #Step 0: create the output directories for HHCF
     create_hhcf_directories(outpath)
 
-    #Step 1: calculate the mean masses
-    if os.path.exists(outpath+"/halo_mass_info.txt"):
-        halo_mass_info = np.loadtxt(outpath+"/halo_mass_info.txt")
-    else:
-        halo_mass_info = calculate_mean_mass(halopath,do_JK,ndivs)
-        np.savetxt(outpath+"/halo_mass_info.txt",halo_mass_info)
-    print "\tHalo masses averaged, results:"
-    print "\t\tMmean  = %e"%halo_mass_info[0]
-    print "\t\tMtotal = %e"%halo_mass_info[1]
-    print "\t\tNhalos = %d"%halo_mass_info[2]
-    Mmean,Mtotal,Nh = halo_mass_info
+    #Step 1: calculate the full HH correlation function
+    calcalate_hhcf_full(outpath,halopath,nbins,limits,edges)
 
-    #Step 2: get random catalogs.
-    if os.path.exists(randpath): randoms = np.loadtxt(randpath)
-    else: raise Exception("Must create random catalog first.")
-
-    #Step 3: calculate the full HH correlation function
-    calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms)
-
-    #Step 4: calculate the HH correlation function within JK subregions
+    #Step 2: calculate the HH correlation function within JK subregions
     if do_JK:
-        import compute_hhcf_jk
-        compute_hhcf_jk.calculate_JK_hhcf(outpath,jkhalopath,nbins,limits,edges,Nh,jkrandpath,ndivs)
+        print "HHCF JK Not implemented yet"
+        #import compute_hhcf_jk
+        #compute_hhcf_jk.calculate_JK_hhcf(outpath, jkhalopath, nbins, limits, edges, ndivs)
+        return
 
     print "Halo-halo correlation function complete."
     return
 
-def calcalate_hhcf_full(outpath,halopath,nbins,limits,Nh,randoms):
+def calcalate_hhcf_full(outpath, halopath, nbins, limits, edges):
     """
     Calculate the halo-halo correlation function
     for the full volume.
     """
-    redpath = halopath
-    infile = open(redpath,"r")
-    halos = np.zeros((int(Nh),3))
-    i = 0
-    for line in infile:
-        if line[0] is "#": continue
-        parts = line.split()
-        halos[i,:] = float(parts[x_index]),float(parts[y_index]),float(parts[z_index])
-        i+=1
-    infile.close()
-    #Interface with treecorr
-    config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1]}
-    halo_cat = treecorr.Catalog(x=halos[:,0],y=halos[:,1],z=halos[:,2],config=config)
-    random_cat = treecorr.Catalog(x=randoms[:,0],y=randoms[:,1],z=randoms[:,2],config=config)
-    DD = treecorr.NNCorrelation(config)
-    DR = treecorr.NNCorrelation(config)
-    RR = treecorr.NNCorrelation(config)
-    DD.process(halo_cat)
-    DR.process(halo_cat,random_cat)
-    RR.process(random_cat)
-    DD.write(outpath+"/halohalo_correlation_function/full_hhcf/full_hhcf.txt",RR,DR)
+    X, Y, Z, M = np.genfromtxt(halopath, unpack=True)[[x_index,y_index,z_index, m_index]]
+    N = len(M)
+    Mmean = np.mean(M)
+    print "\tHalo masses averaged, results:"
+    print "\t\tMmean  = %e"%Mmean
+    print "\t\tNhalos = %d"%N
+    boxsize = max(edges) - min(edges)
+    nthreads = 4 #arbitrary
+    bins = np.logspace(np.log10(min(limits)), np.log10(max(limits)), nbins+1)
+    results = xi(boxsize, nthreads, bins, X, Y, Z, output_ravg=True)
+    header = "rmin rmax ravg xi npairs weightavg"
+    np.savetxt(outpath+"/halohalo_correlation_function/full_hhcf/full_hhcf.txt", results, header=header)
     print "\tFull halo-halo correlation function complete."
     return
-
-def calculate_mean_mass(halopath,do_JK,ndivs):
-    """
-    Calculate the mean masses of the halos.
-    If JK is on then calculate mean masses
-    for the halos in the JK files.
-    """
-    Mtotal = 0.0
-    N = 0
-    redpath = halopath
-    infile = open(redpath,"r")
-    for line in infile:
-        if line[0] is "#": continue
-        parts = line.split()
-        m = float(parts[m_index])
-        Mtotal += m
-        N += 1
-    Mmean = Mtotal/N
-    print "\tMean masses for JK subregions not implemented yet!"
-    return [Mmean,Mtotal,N]
 
 def create_hhcf_directories(outpath):
     os.system("mkdir -p %s"%outpath+"/halohalo_correlation_function/full_hhcf")
