@@ -5,11 +5,12 @@ and the covariance matrix.
 import os,sys
 try: import numpy as np
 except ImportError: raise Exception("Must install numpy.")
-try: import treecorr
-except ImportError: raise Exception("Must install treecorr.")
+#try: import treecorr
+#except ImportError: raise Exception("Must install treecorr.")
 try: 
-    from Corrfunc.theory.DD import DD
-    from Corrfunc.theory.xi import xi
+    from Corrfunc.theory.DD import DD as DDcf
+    from Corrfunc.theory.xi import xi as xicf
+    nthreads = 8
 except ImportError: raise Exception("Must install Corrfunc.")
 
 
@@ -26,7 +27,7 @@ m_index = indices['m']
 #A constant we use
 sqrt3 = np.sqrt(3)
 
-def calculate_JK_hhcf(outpath, halopath, nbins, limits, edges, ndivs):
+def calculate_JK_hhcf(outpath, halopath, randompath, nbins, limits, edges, ndivs):
     """Calculate the halo-halo correlation function for the JK subregions.
 
     Inputs:
@@ -40,21 +41,25 @@ def calculate_JK_hhcf(outpath, halopath, nbins, limits, edges, ndivs):
        ndivs: number of JK subregions
     """
     print "\tComputing JK HHCF."
+    print "This is broken right now."
+    return 0
+
     #Jackknife subregion step size
     step = (edges[1]-edges[0])/ndivs
     Njk = int(ndivs**3)
-    sys.exit()
+
+    #Figure out the bins
+    bins = np.logspace(np.log10(limits[0]), np.log10(limits[1]), nbins+1)
 
     #Read in all halos
     all_halos = read_jk_cats(halopath,Njk)
-    all_rands = read_jk_cats(jkrandpath,Njk)
+    all_rands = read_jk_cats(randompath,Njk)
 
-    #Treecorr interface
-    config = {'nbins':nbins,'min_sep':limits[0],'max_sep':limits[1],'bin_slop':0.3,'verbose':0}
-    
     #Get all autocorrelations
     #These are all of length Njks
-    DDa_all, DRa_all, RRa_all = calculate_autos(outpath,config,all_halos,all_rands,step,ndivs,Njk)
+    DDa_all, DRa_all, RRa_all = calculate_autos(outpath, all_halos, all_rands, bins, Njk)
+    print "Got autos"
+    sys.exit()
 
     #Get all cross correlations
     DDc_all, DRc_all, RRc_all = calculate_cross(outpath,config,all_halos,all_rands,step,ndivs,Njk)
@@ -237,7 +242,7 @@ def calculate_cross(outpath,config,all_halos,all_rands,step,ndivs,Njk):
         DDc_all[i].write(outpath+"/halohalo_correlation_function/JK_single/CROSS%d.txt"%i,RRc_all[i],DRc_all[i])
     return DDc_all, DRc_all, RRc_all
 
-def calculate_autos(outpath,config,all_halos,all_rands,step,ndivs,Njk):
+def calculate_autos(outpath, all_halos, all_rands, bins, Njk):
     """Calculate the DD and DR autocorrelations.
     This calculates the correlations within the same spatial regions.
     """
@@ -245,22 +250,27 @@ def calculate_autos(outpath,config,all_halos,all_rands,step,ndivs,Njk):
     DRa_all = []
     RRa_all = []
     for index in xrange(0,Njk):
-        halos = all_halos[index]
-        rands = all_rands[index]
-        rand_cat = treecorr.Catalog(x=rands[:,0],
-                                      y=rands[:,1],
-                                      z=rands[:,2],
-                                      config=config)
-        halo_cat = treecorr.Catalog(x=halos[:,0],
-                                    y=halos[:,1],
-                                    z=halos[:,2],
-                                    config=config)
-        DD = treecorr.NNCorrelation(config)
-        DR = treecorr.NNCorrelation(config)
-        RR = treecorr.NNCorrelation(config)
-        DD.process_auto(halo_cat)
-        DR.process_cross(halo_cat,rand_cat)
-        RR.process_auto(rand_cat)
+        xh, yh, zh = all_halos[index].T
+        xr, yr, zr = all_rands[index].T
+        print xh.shape, yh.shape, zh.shape
+        print bins
+        DDresult = DDcf(1, 4, bins, xh, yh, zh, periodic=False, verbose=True)
+        DRresult = DDcf(0, nthreads, bins, xh, yh, zh,
+                        X2=xr, Y2=yr, Z2=zr, 
+                        periodic=True, verbose=False)
+        RRresult = DDcf(1, nthreads, bins, xr, yr, zr,
+                        periodic=True, verbose=False)
+        
+        DD = []
+        DR = []
+        RR = []
+        for i in range(len(DDresult)):
+            DD.append(DDresult[i]['npairs'])
+            DR.append(DRresult[i]['npairs'])
+            RR.append(RRresult[i]['npairs'])
+        DD = np.array(DD)
+        DR = np.array(DR)
+        RR = np.array(RR)
         DDa_all.append(DD)
         DRa_all.append(DR)
         RRa_all.append(RR)

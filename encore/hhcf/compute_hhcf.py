@@ -21,7 +21,7 @@ y_index = indices['y']
 z_index = indices['z']
 m_index = indices['m']
 
-def compute_hhcf(outpath, halopath, jkhalopath, nbins, limits, edges, do_JK, ndivs):
+def compute_hhcf(outpath, halopath, jkhalopath, jkrandompath, nbins, limits, edges, do_JK, ndivs):
     """
     Compute the halo-halo correlation function.
 
@@ -39,13 +39,13 @@ def compute_hhcf(outpath, halopath, jkhalopath, nbins, limits, edges, do_JK, ndi
     create_hhcf_directories(outpath)
 
     #Step 1: calculate the full HH correlation function
-    calcalate_hhcf_full(outpath,halopath,nbins,limits,edges)
+    #calcalate_hhcf_full(outpath, halopath, nbins, limits, edges)
 
     #Step 2: calculate the HH correlation function within JK subregions
     if do_JK:
         print "HHCF JK Not implemented yet"
-        #import compute_hhcf_jk
-        #compute_hhcf_jk.calculate_JK_hhcf(outpath, jkhalopath, nbins, limits, edges, ndivs)
+        import compute_hhcf_jk
+        compute_hhcf_jk.calculate_JK_hhcf(outpath, jkhalopath, jkrandompath, nbins, limits, edges, ndivs)
         return
 
     print "Halo-halo correlation function complete."
